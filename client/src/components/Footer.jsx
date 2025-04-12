@@ -46,7 +46,7 @@ const Footer = () => {
       </div>
 
       <div className="mt-16 py-4 ">
-        <p className="text-amber-50 text-sm font-extralight text-center">© 2025, SUPERVINTAGE</p>
+        <p className="text-amber-50 text-sm font-extralight text-center">© 2025, EFFATHA</p>
       </div>
     </div>
   );

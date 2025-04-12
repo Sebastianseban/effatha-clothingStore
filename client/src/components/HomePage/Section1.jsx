@@ -41,6 +41,7 @@
 // export default Section1
 
 import React, { useEffect, useState } from 'react';
+import AnimatedButton from '../AnimatedButton';
 
 const slides = [
   {
@@ -50,7 +51,8 @@ const slides = [
         <>
         <p className="text-2xl font-light text-center text-white">every day essentials</p>
         <h1 className="text-4xl font-bold text-white">New Collection</h1>
-        <button className="text-2xl text-white border py-2 px-4 mt-9">Shop Now</button>
+        {/* <button className="text-2xl text-white border py-2 px-4 mt-9">Shop Now</button> */}
+        <AnimatedButton/>
       </>
     ),
   },
@@ -61,18 +63,24 @@ const slides = [
       <>
         <p className="text-2xl font-light text-center text-white">every day essentials</p>
         <h1 className="text-4xl font-bold text-white">New Collection</h1>
-        <button className="text-2xl text-white border py-2 px-4 mt-9">Shop Now</button>
+        {/* <button className="text-2xl text-white border py-2 px-4 mt-9">Shop Now</button> */}
+        <AnimatedButton/>
       </>
     ),
   },
   {
     id: 3,
-    image: '/hero7.jpg',
+    image: '/hero1.jpg',
     content: (
       <>
         <p className="text-2xl font-light text-center text-white">every day essentials</p>
         <h1 className="text-4xl font-bold text-white">New Collection</h1>
-        <button className="text-2xl text-white border py-2 px-4 mt-9">Shop Now</button>
+        {/* <button className="text-2xl text-white border py-2 px-4 mt-9">Shop Now</button> */}
+
+        <AnimatedButton/>
+      
+
+
       </>
     ),
   },
