@@ -7,7 +7,7 @@ import { BsCart3 } from "react-icons/bs";
 
 const NavBar = () => {
   return (
-    <div className='w-full  border-b border-gray-300 flex justify-between items-center px-16 py-3 '>
+    <div className='w-full  border-b border-gray-300  flex justify-between items-center px-16 py-3 '>
         <div className='flex gap-6 items-center text-2xl'>
         <LuAlignJustify />
         <IoIosSearch/>
