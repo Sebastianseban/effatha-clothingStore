@@ -7,7 +7,9 @@ const HomePage = () => {
   return (
     <div>
    <Section1/>
-   <Section2/>
+   <Section2 title="NEW ARRIVAL"/>
+   <Section2 title="BEST SELLER"/>
+   
 
     </div>
   );

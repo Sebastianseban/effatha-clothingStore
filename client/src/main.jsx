@@ -6,6 +6,7 @@ import HomePage from './pages/HomePage.jsx'
 
 
 import {createBrowserRouter,RouterProvider} from "react-router-dom"
+import CollectionPage from './pages/CollectionPage.jsx'
 
 
 const router = createBrowserRouter([
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
     {
       path: '',
       element: <HomePage/>
+    },
+    {
+      path: '/collections',
+      element: <CollectionPage/>
     }
 
   ]
