@@ -3,12 +3,16 @@ import Section1 from "../components/HomePage/Section1";
 import NavBar from "../components/NavBar";
 import Section2 from "../components/HomePage/Section2";
 
+
 const HomePage = () => {
   return (
     <div>
    <Section1/>
-   <Section2 title="NEW ARRIVAL"/>
-   <Section2 title="BEST SELLER"/>
+  <div className="px-8" >
+  <Section2 title="NEW ARRIVAL" viewAllLink="/collections/newArrivals"/>
+  <Section2 title="BEST SELLER"/>
+  </div>
+
    
 
     </div>

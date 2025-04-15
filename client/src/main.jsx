@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage.jsx'
 
 import {createBrowserRouter,RouterProvider} from "react-router-dom"
 import CollectionPage from './pages/CollectionPage.jsx'
+import NewArrivals from './pages/NewArrivals.jsx'
 
 
 const router = createBrowserRouter([
@@ -20,7 +21,12 @@ const router = createBrowserRouter([
     {
       path: '/collections',
       element: <CollectionPage/>
+    },
+    {
+      path: '/collections/newArrivals',
+      element: <NewArrivals/>
     }
+
 
   ]
   }

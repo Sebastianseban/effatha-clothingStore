@@ -1,11 +1,20 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { LuAlignJustify } from "react-icons/lu";
 import { IoIosSearch } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa6";
 import { BsCart3 } from "react-icons/bs";
+import Cart from './Cart';
 
 
 const NavBar = () => {
+  const [isCartOpen, setIsCartOpen] = useState(false);
+
+  const toggleCart = () => {
+    setIsCartOpen(!isCartOpen);
+  };
+
+
+
   return (
     <div className='w-full  border-b border-gray-300  flex justify-between items-center px-16 py-3 '>
         <div className='flex gap-6 items-center text-2xl'>
@@ -22,7 +31,11 @@ const NavBar = () => {
 
         <div className='flex gap-6 items-center text-2xl'>
            <FaRegUser/>
-           <BsCart3/>
+           <BsCart3 onClick={toggleCart}/>
+
+           {
+            isCartOpen && <Cart onClose={()=> setIsCartOpen(false)}/>
+           }
 
 
         </div>
