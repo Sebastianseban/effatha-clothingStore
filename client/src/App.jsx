@@ -11,7 +11,6 @@ function App() {
     <div>
    
     <NavBar/>
-    
     <Outlet/>
    <Footer/>
 

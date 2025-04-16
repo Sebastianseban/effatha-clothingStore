@@ -2,6 +2,7 @@ import React from "react";
 import Section1 from "../components/HomePage/Section1";
 import NavBar from "../components/NavBar";
 import Section2 from "../components/HomePage/Section2";
+import SideBar from "../components/SideBar";
 
 
 const HomePage = () => {

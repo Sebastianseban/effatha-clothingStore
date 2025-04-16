@@ -4,22 +4,32 @@ import { IoIosSearch } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa6";
 import { BsCart3 } from "react-icons/bs";
 import Cart from './Cart';
+import SideBar from './SideBar';
 
 
 const NavBar = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isSideBarOpen,setIsSideBarOpen] = useState(false)
 
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
   };
+
+  const toggleSideBar = () =>{
+    setIsSideBarOpen(!isSideBarOpen)
+  }
 
 
 
   return (
     <div className='w-full  border-b border-gray-300  flex justify-between items-center px-16 py-3 '>
         <div className='flex gap-6 items-center text-2xl'>
-        <LuAlignJustify />
+        <LuAlignJustify onClick={toggleSideBar}/>
         <IoIosSearch/>
+
+        {
+          isSideBarOpen && <SideBar onClose={()=> setIsSideBarOpen(false)}/>
+        }
 
         </div>
 
