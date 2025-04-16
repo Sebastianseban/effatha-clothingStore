@@ -1,44 +1,4 @@
-// import React from 'react'
 
-// const Section1 = () => {
-//   return (
-//     <div className="w-full h-full ">
-//     <div className='w-full h-[600px] overflow-hidden relative flex justify-center items-center'>
-//           <img className='object-cover absolute'  src="/hero5.jpg" alt="" />
-//           <div className='z-40'>
-//               <h1 className='text-4xl font-bold text-white'>Buy Now</h1>
-
-//               <div className='flex gap-4 mt-40 justify-center items-center'>
-// <div className='bg-gray-400 p-1 rounded-full'><div className='size-3 bg-gray-200 rounded-full'></div></div>
-// <div className='size-3 bg-gray-100 rounded-full'></div>
-// <div className='size-3 bg-gray-00 rounded-full'></div>
-// <div className='size-3 bg-gray-200 rounded-full'></div>
-
-//               </div>
-//           </div>
-
-//       </div>
-//     <div className="w-full h-[600px] overflow-hidden relative flex justify-center items-center">
-//       <img className="object-cover absolute   " src="/hero7.jpg" alt="" />
-//       <div className="z-40 flex justify-center flex-col items-center">
-//           <p className="text-2xl font-light text-center text-white">every day essentials</p>
-//         <h1 className="text-4xl font-bold text-white">New Collection</h1>
-
-//         <button className="text-2xl text-white border py-2 px-4 mt-9">Shop Now</button>
-
-//         <div className="flex gap-4 mt-40 justify-center">
-//           <div className="size-3 bg-gray-200 rounded-full"></div>
-//           <div className="size-3 bg-gray-200 rounded-full"></div>
-//           <div className="size-3 bg-gray-200 rounded-full"></div>
-//           <div className="size-3 bg-gray-200 rounded-full"></div>
-//         </div>
-//       </div>
-//     </div>
-//   </div>
-//   )
-// }
-
-// export default Section1
 
 import React, { useEffect, useState } from 'react';
 import AnimatedButton from '../AnimatedButton';
@@ -48,11 +8,14 @@ const slides = [
     id: 1,
     image: '/hero5.jpg',
     content: (
-        <>
-        <p className="text-2xl font-light text-center text-white">every day essentials</p>
-        <h1 className="text-4xl font-bold text-white">New Collection</h1>
-        {/* <button className="text-2xl text-white border py-2 px-4 mt-9">Shop Now</button> */}
-        <AnimatedButton/>
+      <>
+        <p className="text-lg sm:text-xl md:text-2xl font-light text-center text-white">
+          every day essentials
+        </p>
+        <h1 className="text-2xl sm:text-4xl font-bold text-white">
+          New Collection
+        </h1>
+        <AnimatedButton />
       </>
     ),
   },
@@ -61,10 +24,13 @@ const slides = [
     image: '/hero7.jpg',
     content: (
       <>
-        <p className="text-2xl font-light text-center text-white">every day essentials</p>
-        <h1 className="text-4xl font-bold text-white">New Collection</h1>
-        {/* <button className="text-2xl text-white border py-2 px-4 mt-9">Shop Now</button> */}
-        <AnimatedButton/>
+        <p className="text-lg sm:text-xl md:text-2xl font-light text-center text-white">
+          every day essentials
+        </p>
+        <h1 className="text-2xl sm:text-4xl font-bold text-white">
+          New Collection
+        </h1>
+        <AnimatedButton />
       </>
     ),
   },
@@ -73,18 +39,16 @@ const slides = [
     image: '/hero1.jpg',
     content: (
       <>
-        <p className="text-2xl font-light text-center text-white">every day essentials</p>
-        <h1 className="text-4xl font-bold text-white">New Collection</h1>
-        {/* <button className="text-2xl text-white border py-2 px-4 mt-9">Shop Now</button> */}
-
-        <AnimatedButton/>
-      
-
-
+        <p className="text-lg sm:text-xl md:text-2xl font-light text-center text-white">
+          every day essentials
+        </p>
+        <h1 className="text-2xl sm:text-4xl font-bold text-white">
+          New Collection
+        </h1>
+        <AnimatedButton />
       </>
     ),
   },
-  
 ];
 
 const Section1 = () => {
@@ -98,7 +62,7 @@ const Section1 = () => {
   }, []);
 
   return (
-    <div className="w-full h-[600px] relative overflow-hidden">
+    <div className="w-full h-[500px] sm:h-[600px] relative overflow-hidden">
       {slides.map((slide, index) => (
         <div
           key={slide.id}
@@ -111,15 +75,18 @@ const Section1 = () => {
             alt=""
             className="absolute w-full h-full object-cover"
           />
-          <div className="relative z-30 text-center flex flex-col items-center">
+          <div className="relative z-30 text-center px-4 flex flex-col items-center">
             {slide.content}
+
             {/* Dots */}
-            <div className="flex gap-4 mt-40">
+            <div className="flex gap-2 sm:gap-4 mt-20 sm:mt-32">
               {slides.map((_, dotIndex) => (
                 <div
                   key={dotIndex}
-                  className={`w-5 h-5 rounded-full border-2 ${
-                    current === dotIndex ? 'border-dotted border-white animate-spin-slow' : 'border-gray-400'
+                  className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full border-2 ${
+                    current === dotIndex
+                      ? 'border-dotted border-white animate-spin-slow'
+                      : 'border-gray-400'
                   } flex items-center justify-center`}
                 >
                   <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -134,3 +101,4 @@ const Section1 = () => {
 };
 
 export default Section1;
+
