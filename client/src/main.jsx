@@ -11,7 +11,9 @@ import SignUp from "./pages/SignUp.jsx";
 import LoginPage from "./pages/Loginpage.jsx";
 import SignUpPage from "./pages/SignUp.jsx";
 import ProductPage from "./pages/ProductPage.jsx";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -19,11 +21,11 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "", 
+        path: "",
         element: <HomePage />,
       },
       {
-        path: "collections", 
+        path: "collections",
         element: <CollectionPage />,
       },
       {
@@ -44,11 +46,12 @@ const router = createBrowserRouter([
       },
     ],
   },
-
 ]);
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </StrictMode>
 );
