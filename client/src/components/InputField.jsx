@@ -6,14 +6,14 @@ const InputField = ({ label, id, placeholder, type = "text", value, onChange }) 
       <label htmlFor={id} className="text-xl text-amber-50">
         {label}
       </label>
-      <div className="bg-[#1a1a1aba] mt-2 h-[50px] rounded-2xl p-2">
+      <div className="bg-[#1a1a1aba] mt-2 rounded-2xl p-2">
         <input
           id={id}
           type={type}
           placeholder={placeholder}
-          value={value} 
-          onChange={onChange} 
-          className="w-full bg-transparent border-none outline-none text-amber-100 placeholder:text-sm"
+          value={value}
+          onChange={onChange}
+          className="w-full bg-transparent border-none h-[50px] outline-none text-amber-100 placeholder:text-sm"
         />
       </div>
     </div>
