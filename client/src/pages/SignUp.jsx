@@ -45,10 +45,10 @@ const SignUpPage = () => {
   };
 
   return (
-    <div className="w-full h-screen flex">
+    <div className="w-full  flex">
       {/* Left Side with Background Image */}
       <div
-        className="w-1/2 h-full bg-cover bg-amber-200"
+        className="w-1/2  bg-cover bg-amber-200"
         style={{
           backgroundImage: "url('/hero7.jpg')", // Background image from public folder
         }}
@@ -110,7 +110,7 @@ const SignUpPage = () => {
             label="Mobile Number"
             id="mobileNumber"
             placeholder="Enter your number"
-            type="text"
+            type="tel"
             value={formData.mobileNumber}
             onChange={handleChange}
           />
