@@ -74,7 +74,6 @@ export const loginUser = asyncHandler(async (req, res) => {
   if (!password || (!email && !mobileNumber)) {
     throw new ApiError(400, "Email or Mobile Number and password are required");
   }
-  
 
   const user = await User.findOne({
     $or: [{ mobileNumber }, { email }],
@@ -85,7 +84,6 @@ export const loginUser = asyncHandler(async (req, res) => {
   }
 
   const isPasswordValid = await user.isPasswordCorrect(password);
-  
 
   if (!isPasswordValid) {
     throw new ApiError(401, "invalid user credentials");
@@ -109,14 +107,37 @@ export const loginUser = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
-      new ApiResponse(200, {
-        user: loggedInUser,
-        accessToken,
-        refreshToken,
-      },"User logged in Successfully")
+      new ApiResponse(
+        200,
+        {
+          user: loggedInUser,
+        },
+        "User logged in Successfully"
+      )
     );
 });
+export const logoutUser = asyncHandler(async (req, res) => {
 
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $unset: {
+        refreshToken: 1,
+      },
+    },
+    {
+      new: true,
+    }
+  );
 
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
 
-
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User Logged Out"));
+});

@@ -47,7 +47,7 @@ const SignUpPage = () => {
       onSuccess: (response) => {
         toast.success("Account created successfully!");
         setUser(response.user);
-        navigate("/");
+        navigate("/login");
       },
       onError: (error) => {
         console.error(error);
