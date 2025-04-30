@@ -100,17 +100,18 @@ export const loginUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite: "None" 
   };
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
     .json(
       new ApiResponse(
         200,
         {
           user: loggedInUser,
+          accessToken,
         },
         "User logged in Successfully"
       )
@@ -190,7 +191,7 @@ export const getCurrentUser = asyncHandler(async (req,res) => {
     throw new ApiError(401, "Unauthorized access");
   }
 
-  const user = await findById(userId).select("-password -refreshtoken" )
+  const user = await User.findById(userId).select("-password -refreshToken" )
 
   if (!user) {
     throw new ApiError(404, "User not found");
