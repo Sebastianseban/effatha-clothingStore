@@ -183,3 +183,21 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
+export const getCurrentUser = asyncHandler(async (req,res) => {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized access");
+  }
+
+  const user = await findById(userId).select("-password -refreshtoken" )
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  return res
+  .status(200)
+  .json(new ApiResponse(200, user, "User fetched successfully"));
+})
+
