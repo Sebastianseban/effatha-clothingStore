@@ -6,7 +6,7 @@ import { BsCart3 } from "react-icons/bs";
 import Cart from "./Cart";
 import SideBar from "./SideBar";
 import { FaUserCircle } from "react-icons/fa";
-import { Link, Links, useLocation } from "react-router-dom";
+import { Link, } from "react-router-dom";
 
 const NavBar = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);

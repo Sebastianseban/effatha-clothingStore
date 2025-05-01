@@ -7,7 +7,6 @@ import HomePage from "./pages/HomePage.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CollectionPage from "./pages/CollectionPage.jsx";
 import NewArrivals from "./pages/NewArrivals.jsx";
-import SignUp from "./pages/SignUp.jsx";
 import LoginPage from "./pages/Loginpage.jsx";
 import SignUpPage from "./pages/SignUp.jsx";
 import ProductPage from "./pages/ProductPage.jsx";
