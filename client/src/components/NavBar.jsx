@@ -7,6 +7,7 @@ import Cart from "./Cart";
 import SideBar from "./SideBar";
 import { FaUserCircle } from "react-icons/fa";
 import { Link, } from "react-router-dom";
+import useUserStore from "../store/userStore";
 
 const NavBar = () => {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -20,7 +21,11 @@ const NavBar = () => {
   const toggleSideBar = () => setIsSideBarOpen(!isSideBarOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
 
-  const user = false; // Assume user is not logged in
+  // const user = false; // Assume user is not logged in
+
+  const { isAuth, user } = useUserStore();
+
+
 
   return (
     <div className="w-full border-b border-gray-300 flex justify-between items-center px-4 sm:px-8 md:px-16 py-3">
@@ -44,7 +49,7 @@ const NavBar = () => {
       </div>
 
       {/* Center: Logo */}
-     <Link to=""> <div className="flex flex-col justify-center items-center">
+     <Link to="/home"> <div className="flex flex-col justify-center items-center">
         <h1 className="text-xl sm:text-2xl font-semibold">EFFATHA</h1>
         <p className="text-xs sm:text-sm font-light">LET IT BE OPENED</p>
       </div>
@@ -53,8 +58,12 @@ const NavBar = () => {
       {/* Right side: User + Cart */}
       <div className="flex gap-4 items-center text-2xl">
         {/* User Section */}
-        {user ? (
-          <FaRegUser className="cursor-pointer" />
+        {isAuth ? (
+          <div className="flex items-center gap-2 cursor-pointer">
+          <FaRegUser />
+          <span className="text-sm">{user?.firstName}</span>
+        </div>
+          
         ) : (
           <>
             <Link to="/login">

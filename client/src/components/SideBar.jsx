@@ -31,7 +31,7 @@ const SideBar = ({ onClose }) => {
           {/* Nav Links */}
           <div className="flex flex-col gap-4 p-8 text-lg">
 
-            <Link to={"/"}><p>Home</p></Link>
+            <Link to={"/home"}><p>Home</p></Link>
             <Link><p>All</p></Link>
             <Link to={"/collections"}><p>collections</p></Link>
             <Link><p>Bottoms</p></Link>

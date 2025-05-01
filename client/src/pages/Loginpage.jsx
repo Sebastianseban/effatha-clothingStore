@@ -68,16 +68,19 @@ import { FcGoogle } from "react-icons/fc";
 import InputField from "../components/InputField";
 import { useLogin } from "../hooks/useLogin";
 import useUserStore from "../store/userStore";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const setUser = useUserStore((state) => state.setUser);
+  const navigate = useNavigate();
 
   const { mutate, isLoading, isError, error } = useLogin();
 
   const handleLogin = (e) => {
     e.preventDefault();
+
     mutate(
       { email, password },
       {
@@ -91,6 +94,7 @@ const LoginPage = () => {
           setUser(user);
 
           // Redirect after login (optional)
+          navigate("/home")
       
         },
         onError: (err) => {
