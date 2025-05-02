@@ -1,70 +1,7 @@
-// import React from "react";
-// import { FcGoogle } from "react-icons/fc";
-// import InputField from "../components/InputField";
-
-// const LoginPage = () => {
-//   return (
-//     <div className="w-full h-screen flex">
-//       {/* Left Side */}
-//       <div className="w-1/2 h-full bg-cover bg-amber-200" style={{
-//           backgroundImage: "url('/hero7.jpg')",
-//         }}></div>
-
-//       {/* Right Side */}
-//       <div className="w-1/2 flex p-20 flex-col bg-black justify-center items-center gap-5">
-//         <h1 className="text-2xl text-white font-extralight">Login to Your Account</h1>
-//         <p className="text-xl text-white font-light">
-//           Enter your credentials to access your account
-//         </p>
-
-//         {/* Google Button */}
-//         <div className="flex mt-5 rounded-2xl text-amber-50 border justify-center gap-2 border-gray-500 items-center w-[400px] h-[50px] cursor-pointer">
-//           <FcGoogle />
-//           <button>Google</button>
-//         </div>
-
-//         {/* Divider */}
-//         <div className="border-b border-gray-500 w-full relative mt-2">
-//           <span className="text-gray-400 bg-black px-2 text-xl absolute left-1/2 -translate-x-1/2 -top-4">
-//             or
-//           </span>
-//         </div>
-
-//         {/* Form Inputs */}
-//         <InputField
-//           label="Email"
-//           id="email"
-//           placeholder="Enter your email"
-//           type="email"
-//         />
-
-//         <div className="w-full">
-//           <InputField
-//             label="Password"
-//             id="password"
-//             placeholder="Enter your password"
-//             type="password"
-//           />
-//         </div>
-
-//         {/* Login Button */}
-//         <button className="bg-white text-black w-full h-16 rounded-2xl mt-4 text-lg font-medium">
-//           Login
-//         </button>
-
-//         <p className="text-[12px] text-amber-100 font-light mt-2">
-//           Don't have an account? <span className="font-bold">Sign up</span>
-//         </p>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LoginPage;
-
 
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import InputField from "../components/InputField";
 import { useLogin } from "../hooks/useLogin";
 import useUserStore from "../store/userStore";
@@ -75,6 +12,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const setUser = useUserStore((state) => state.setUser);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const { mutate, isLoading, isError, error } = useLogin();
 
@@ -93,9 +31,8 @@ const LoginPage = () => {
           // Set user in Zustand
           setUser(user);
 
-          // Redirect after login (optional)
-          navigate("/home")
-      
+          // Redirect after login
+          navigate("/home");
         },
         onError: (err) => {
           console.error("Login failed", err);
@@ -107,9 +44,10 @@ const LoginPage = () => {
   return (
     <div className="w-full h-screen flex">
       {/* Left Side */}
-      <div className="w-1/2 h-full bg-cover bg-amber-200" style={{
-          backgroundImage: "url('/hero7.jpg')",
-        }}></div>
+      <div
+        className="w-1/2 h-full bg-cover bg-amber-200"
+        style={{ backgroundImage: "url('/hero7.jpg')" }}
+      ></div>
 
       {/* Right Side */}
       <div className="w-1/2 flex p-20 flex-col bg-black justify-center items-center gap-5">
@@ -141,14 +79,28 @@ const LoginPage = () => {
           onChange={(e) => setEmail(e.target.value)}
         />
 
-        <InputField
-          label="Password"
-          id="password"
-          placeholder="Enter your password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="w-full relative">
+          <InputField
+            label="Password"
+            id="password"
+            placeholder="Enter your password"
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((prev) => !prev)}
+            className="absolute top-[52px] right-4 text-gray-400 hover:text-white text-xl"
+            aria-label="Toggle password visibility"
+          >
+            {showPassword ? <FiEyeOff /> : <FiEye />}
+          </button>
+
+          <p className="text-[12px] text-amber-100 font-light mt-2">
+            Must be at least 8 characters.
+          </p>
+        </div>
 
         {/* Login Button */}
         <button
@@ -166,7 +118,13 @@ const LoginPage = () => {
         )}
 
         <p className="text-[12px] text-amber-100 font-light mt-2">
-          Don't have an account? <span className="font-bold">Sign up</span>
+          Don't have an account?{" "}
+          <span
+            onClick={() => navigate("/signup")}
+            className="font-bold underline cursor-pointer"
+          >
+            Sign up
+          </span>
         </p>
       </div>
     </div>
@@ -174,3 +132,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+

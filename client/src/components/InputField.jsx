@@ -13,7 +13,7 @@ const InputField = ({ label, id, placeholder, type = "text", value, onChange }) 
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className="w-full bg-transparent border-none h-[50px] outline-none text-amber-100 placeholder:text-sm"
+          className="w-full bg-transparent border-none h-[50px] outline-none text-amber-100 placeholder:text-sm "
         />
       </div>
     </div>
