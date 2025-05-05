@@ -32,7 +32,7 @@ const LoginPage = () => {
           setUser(user);
 
           // Redirect after login
-          navigate("/home");
+          navigate("/");
         },
         onError: (err) => {
           console.error("Login failed", err);

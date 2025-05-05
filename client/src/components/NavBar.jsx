@@ -49,7 +49,7 @@ const NavBar = () => {
       </div>
 
       {/* Center: Logo */}
-     <Link to="/home"> <div className="flex flex-col justify-center items-center">
+     <Link to=""> <div className="flex flex-col justify-center items-center">
         <h1 className="text-xl sm:text-2xl font-semibold">EFFATHA</h1>
         <p className="text-xs sm:text-sm font-light">LET IT BE OPENED</p>
       </div>
