@@ -176,9 +176,8 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", NewRefreshToken, options)
-      .json(new ApiResponse(200, "Access token refreshed"));
+      .json(new ApiResponse(200,{accessToken}, "Access token refreshed"));
   } catch (error) {
     throw new ApiError(401, error?.message || "invalid refresh token");
   }
