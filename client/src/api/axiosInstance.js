@@ -23,11 +23,15 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    const isRefreshRequest = originalRequest.url.includes("/users/refresh-token");
+
     // Prevent infinite loop
     if (
       error.response &&
       error.response.status === 401 &&
-      !originalRequest._retry
+      !originalRequest._retry && 
+      !isRefreshRequest 
+
     ) {
       originalRequest._retry = true;
 
