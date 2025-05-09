@@ -40,6 +40,8 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    googleId: { type: String },
+    provider: { type: String, default: "local" },
   },
   { timestamps: true }
 );
