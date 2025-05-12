@@ -43,7 +43,8 @@ const LoginPage = () => {
     try {
       const code = authResult.code;
       const response = await axiosInstance.post("/users/google-auth", { code });
-      const { user, accessToken } = response.data;
+      console.log(response)
+      const { user, accessToken } = response.data.data;
 
       localStorage.setItem("accessToken", accessToken);
       setUser(user);
