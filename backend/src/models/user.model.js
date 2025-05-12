@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
+
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -25,11 +26,15 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: function () {
+        return this.provider === "local";
+      },
     },
     mobileNumber: {
       type: String,
-      required: true,
+      required: function () {
+        return this.provider === "local";
+      },
       unique: true,
       trim: true,
       match: [
@@ -40,8 +45,14 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
-    googleId: { type: String },
-    provider: { type: String, default: "local" },
+    googleId: {
+      type: String,
+    },
+    provider: {
+      type: String,
+      default: "local",
+      enum: ["local", "google"],
+    },
   },
   { timestamps: true }
 );
