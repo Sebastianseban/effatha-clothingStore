@@ -1,21 +1,25 @@
 
-import React, { useState } from "react";
+import React, { useState} from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import InputField from "../components/InputField";
 import { useLogin } from "../hooks/useLogin";
 import useUserStore from "../store/userStore";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../api/axiosInstance";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const setUser = useUserStore((state) => state.setUser);
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
 
   const { mutate, isLoading, isError, error } = useLogin();
 
+  // Normal email/password login
   const handleLogin = (e) => {
     e.preventDefault();
 
@@ -24,14 +28,8 @@ const LoginPage = () => {
       {
         onSuccess: (response) => {
           const { user, accessToken } = response.data;
-
-          // Store token in localStorage
           localStorage.setItem("accessToken", accessToken);
-
-          // Set user in Zustand
           setUser(user);
-
-          // Redirect after login
           navigate("/");
         },
         onError: (err) => {
@@ -40,6 +38,26 @@ const LoginPage = () => {
       }
     );
   };
+
+  const responseGoogle = async (authResult) => {
+    try {
+      const code = authResult.code;
+      const response = await axiosInstance.post("/users/google-auth", { code });
+      const { user, accessToken } = response.data;
+
+      localStorage.setItem("accessToken", accessToken);
+      setUser(user);
+      navigate("/");
+    } catch (error) {
+       console.error("Google login failed", error);
+    }
+  };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: responseGoogle,
+    onError: responseGoogle,
+    flow: "auth-google",
+  });
 
   return (
     <div className="w-full h-screen flex">
@@ -51,15 +69,20 @@ const LoginPage = () => {
 
       {/* Right Side */}
       <div className="w-1/2 flex p-20 flex-col bg-black justify-center items-center gap-5">
-        <h1 className="text-2xl text-white font-extralight">Login to Your Account</h1>
+        <h1 className="text-2xl text-white font-extralight">
+          Login to Your Account
+        </h1>
         <p className="text-xl text-white font-light">
           Enter your credentials to access your account
         </p>
 
-        {/* Google Button */}
-        <div className="flex mt-5 rounded-2xl text-amber-50 border justify-center gap-2 border-gray-500 items-center w-[400px] h-[50px] cursor-pointer">
+        {/* Google Button - styled and functional */}
+        <div
+          className="flex mt-5 rounded-2xl text-amber-50 border justify-center gap-2 border-gray-500 items-center w-[400px] h-[50px] cursor-pointer"
+          onClick={googleLogin}
+        >
           <FcGoogle />
-          <button>Google</button>
+          <button>Login with Google</button>
         </div>
 
         {/* Divider */}
@@ -69,7 +92,7 @@ const LoginPage = () => {
           </span>
         </div>
 
-        {/* Form Inputs */}
+        {/* Email/Password Form */}
         <InputField
           label="Email"
           id="email"
@@ -96,7 +119,6 @@ const LoginPage = () => {
           >
             {showPassword ? <FiEyeOff /> : <FiEye />}
           </button>
-
           <p className="text-[12px] text-amber-100 font-light mt-2">
             Must be at least 8 characters.
           </p>
@@ -132,4 +154,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
