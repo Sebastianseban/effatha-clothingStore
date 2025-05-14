@@ -53,6 +53,12 @@ const userSchema = new mongoose.Schema(
       default: "local",
       enum: ["local", "google"],
     },
+    role: {
+      type:String,
+      enum:["user","admin"],
+      default:"user"
+      
+    }
   },
   { timestamps: true }
 );
@@ -77,6 +83,7 @@ userSchema.methods.generateAccessToken = function () {
       firstName: this.firstName,
       lastName: this.lastName,
       mobileNumber: this.mobileNumber,
+      role: this.role,
     },
     process.env.ACCESS_TOKEN_SECRET,
     {
@@ -93,6 +100,7 @@ userSchema.methods.generateRefreshToken = function () {
       firstName: this.firstName,
       lastName: this.lastName,
       mobileNumber: this.mobileNumber,
+      role: this.role,
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
