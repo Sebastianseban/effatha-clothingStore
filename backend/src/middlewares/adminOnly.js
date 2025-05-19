@@ -1,4 +1,4 @@
-import {ApiError, apiError} from "../utils/apiError.js"
+import {ApiError, apiError} from "../utils/ApiError.js"
 
 export const adminOnly = (req,res,next) => {
     if (!req.user || req.user.role !== "admin") {

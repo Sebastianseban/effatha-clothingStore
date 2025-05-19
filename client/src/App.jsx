@@ -33,7 +33,7 @@ function App() {
     <div>
       <NavBar />
       <Outlet />
-      <Footer />
+      <Footer />  
     </div>
   );
 }

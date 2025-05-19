@@ -1,5 +1,5 @@
 
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import InputField from "../components/InputField";
@@ -39,51 +39,51 @@ const LoginPage = () => {
     );
   };
 
+  // Google OAuth login
   const responseGoogle = async (authResult) => {
     try {
       const code = authResult.code;
       const response = await axiosInstance.post("/users/google-auth", { code });
-      console.log(response)
       const { user, accessToken } = response.data.data;
 
       localStorage.setItem("accessToken", accessToken);
       setUser(user);
       navigate("/");
     } catch (error) {
-       console.error("Google login failed", error);
+      console.error("Google login failed", error);
     }
   };
 
   const googleLogin = useGoogleLogin({
     onSuccess: responseGoogle,
     onError: responseGoogle,
-    flow: "auth-google",
+    flow: "auth-code",
   });
 
   return (
-    <div className="w-full h-screen flex">
+    <div className="w-full flex flex-col md:flex-row">
       {/* Left Side */}
       <div
-        className="w-1/2 h-full bg-cover bg-amber-200"
+        className="md:w-1/2 bg-cover bg-amber-200"
         style={{ backgroundImage: "url('/hero7.jpg')" }}
       ></div>
 
       {/* Right Side */}
-      <div className="w-1/2 flex p-20 flex-col bg-black justify-center items-center gap-5">
-        <h1 className="text-2xl text-white font-extralight">
+      <div className="md:w-1/2 flex p-4 sm:p-20 flex-col bg-black justify-center items-center gap-5">
+        <h1 className="text-lg sm:text-2xl text-white font-extralight">
           Login to Your Account
         </h1>
-        <p className="text-xl text-white font-light">
+        <p className="text-sm sm:text-xl text-center text-white font-light">
           Enter your credentials to access your account
         </p>
 
-        {/* Google Button - styled and functional */}
+        {/* Google Login Button */}
         <div
-          className="flex mt-5 rounded-2xl text-amber-50 border justify-center gap-2 border-gray-500 items-center w-[400px] h-[50px] cursor-pointer"
+          className="flex mt-5 py-2 px-7 rounded-2xl text-amber-50 border justify-center gap-2 border-gray-500 items-center cursor-pointer"
           onClick={googleLogin}
         >
           <FcGoogle />
-          <button>Login with Google</button>
+          <button type="button">Login with Google</button>
         </div>
 
         {/* Divider */}
@@ -93,46 +93,47 @@ const LoginPage = () => {
           </span>
         </div>
 
-        {/* Email/Password Form */}
-        <InputField
-          label="Email"
-          id="email"
-          placeholder="Enter your email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <div className="w-full relative">
+        {/* Email/Password Login Form */}
+        <form className="w-full flex flex-col gap-5" onSubmit={handleLogin}>
           <InputField
-            label="Password"
-            id="password"
-            placeholder="Enter your password"
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            label="Email"
+            id="email"
+            placeholder="Enter your email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
-          <button
-            type="button"
-            onClick={() => setShowPassword((prev) => !prev)}
-            className="absolute top-[52px] right-4 text-gray-400 hover:text-white text-xl"
-            aria-label="Toggle password visibility"
-          >
-            {showPassword ? <FiEyeOff /> : <FiEye />}
-          </button>
-          <p className="text-[12px] text-amber-100 font-light mt-2">
-            Must be at least 8 characters.
-          </p>
-        </div>
 
-        {/* Login Button */}
-        <button
-          onClick={handleLogin}
-          disabled={isLoading}
-          className="bg-white text-black w-full h-16 rounded-2xl mt-4 text-lg font-medium"
-        >
-          {isLoading ? "Logging in..." : "Login"}
-        </button>
+          <div className="w-full relative">
+            <InputField
+              label="Password"
+              id="password"
+              placeholder="Enter your password"
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute top-[52px] right-4 text-gray-400 hover:text-white text-xl"
+              aria-label="Toggle password visibility"
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
+            <p className="text-[12px] text-amber-100 font-light mt-2">
+              Must be at least 8 characters.
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="bg-white text-black w-full h-16 rounded-2xl mt-4 text-lg font-medium"
+          >
+            {isLoading ? "Logging in..." : "Login"}
+          </button>
+        </form>
 
         {isError && (
           <p className="text-red-500 text-sm mt-2">
@@ -155,3 +156,4 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+

@@ -19,7 +19,7 @@ const Section2 = ({ title, viewAllLink }) => {
       </div>
 
       {/* Scrollable Product Cards */}
-      <div className="mt-6 relative px-6 sm:px-10 md:px-16">
+      <div className="mt-6 relative px-2 sm:px-10 md:px-16">
         {/* Optional Scroll Arrows (hidden on small screens) */}
         <FaAngleLeft className="hidden md:block absolute top-1/2 -translate-y-1/2 left-4 text-3xl z-10 cursor-pointer" />
         <FaAngleRight className="hidden md:block absolute top-1/2 -translate-y-1/2 right-4 text-3xl z-10 cursor-pointer" />

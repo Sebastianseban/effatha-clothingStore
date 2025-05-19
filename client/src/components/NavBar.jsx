@@ -31,7 +31,7 @@ const NavBar = () => {
     <div className="w-full border-b border-gray-300 flex justify-between items-center px-4 sm:px-8 md:px-16 py-3">
       {/* Left side: Sidebar + Search */}
       <div className="flex gap-4 items-center text-2xl">
-        <LuAlignJustify onClick={toggleSideBar} className="cursor-pointer" />
+        <LuAlignJustify onClick={toggleSideBar} className="cursor-pointer size-4 sm:size-auto " />
 
         {isSearchOpen ? (
           <input
@@ -42,7 +42,7 @@ const NavBar = () => {
             className="border rounded-md px-2 py-1 text-sm focus:outline-none"
           />
         ) : (
-          <IoIosSearch onClick={toggleSearch} className="cursor-pointer" />
+          <IoIosSearch onClick={toggleSearch} className="cursor-pointer size-4 sm:size-auto" />
         )}
 
         {isSideBarOpen && <SideBar onClose={() => setIsSideBarOpen(false)} />}
@@ -50,7 +50,7 @@ const NavBar = () => {
 
       {/* Center: Logo */}
      <Link to=""> <div className="flex flex-col justify-center items-center">
-        <h1 className="text-xl sm:text-2xl font-semibold">EFFATHA</h1>
+        <h1 className="text-lg sm:text-2xl font-semibold">EFFATHA</h1>
         <p className="text-xs sm:text-sm font-light">LET IT BE OPENED</p>
       </div>
       </Link>
@@ -60,20 +60,20 @@ const NavBar = () => {
         {/* User Section */}
         {isAuth ? (
           <div className="flex items-center gap-2 cursor-pointer">
-          <FaRegUser />
+          <FaRegUser className="size-4 sm:size-auto" />
           <span className="text-sm">{user?.firstName}</span>
         </div>
           
         ) : (
           <>
             <Link to="/login">
-              <h1 className="cursor-pointer text-[20px] font-light">Login</h1>
+              <h1 className="cursor-pointer text-[15px] sm:text-[20px] font-light">Login</h1>
             </Link>
           </>
         )}
 
         {/* Cart Section */}
-        <BsCart3 onClick={toggleCart} className="cursor-pointer" />
+        <BsCart3 onClick={toggleCart} className="cursor-pointer size-4 sm:size-auto" />
         {isCartOpen && <Cart onClose={() => setIsCartOpen(false)} />}
       </div>
     </div>
