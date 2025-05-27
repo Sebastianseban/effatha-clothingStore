@@ -11,6 +11,9 @@ import SignUpPage from "./pages/SignUp.jsx";
 import ProductPage from "./pages/ProductPage.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import AdminLayout from "./pages/admin/AdminLayout.jsx";
+import AdminProductsPage from "./pages/admin/AdminProductsPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +31,16 @@ const router = createBrowserRouter([
       { path: "signup", element: <SignUpPage /> },
       { path: "login", element: <LoginPage /> },
       { path: "products", element: <ProductPage /> },
+    ],
+  },
+
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      { path: "", element: <AdminDashboard /> },
+      { path: "admin-products", element: <AdminProductsPage /> }
+
     ],
   },
 ]);
