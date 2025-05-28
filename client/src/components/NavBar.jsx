@@ -24,6 +24,7 @@ const NavBar = () => {
   // const user = false; // Assume user is not logged in
 
   const { isAuth, user } = useUserStore();
+  console.log(user+"user info")
 
 
 

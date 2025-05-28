@@ -20,9 +20,10 @@ function App() {
         const res = await axiosInstance.get("/users/me", {
           withCredentials: true,
         });
-        setUser(res.data.user); // assumes /me returns { user }
+        console.log(res.data)
+        setUser(res.data.data); 
       } catch (error) {
-        clearUser(); // logout on failure
+        clearUser(); 
       }
     };
 

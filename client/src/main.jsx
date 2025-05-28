@@ -14,6 +14,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
 import AdminProductsPage from "./pages/admin/AdminProductsPage.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 const queryClient = new QueryClient();
 
@@ -36,11 +37,16 @@ const router = createBrowserRouter([
 
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: <ProtectedRoute requiredRole="admin" />,
     children: [
-      { path: "", element: <AdminDashboard /> },
-      { path: "admin-products", element: <AdminProductsPage /> }
-
+      {
+        path: "",
+        element: <AdminLayout />,
+        children: [
+          { path: "", element: <AdminDashboard /> },
+          { path: "admin-products", element: <AdminProductsPage /> },
+        ],
+      },
     ],
   },
 ]);

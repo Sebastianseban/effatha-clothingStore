@@ -3,7 +3,7 @@ import { FiX } from "react-icons/fi";
 
 const Cart = ({ isOpen, onClose, cartItems = [] }) => {
   return (
-    <div className="fixed right-0 top-0 h-full w-full bg-white shadow-lg z-50 flex flex-col">
+    <div className="fixed right-0 top-0 h-full w-2/4 bg-white shadow-lg z-50 flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <h2 className="text-sm sm:text-lg font-semibold">Your Cart</h2>
