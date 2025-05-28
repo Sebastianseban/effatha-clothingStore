@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FiEye, FiEyeOff } from "react-icons/fi";
@@ -30,7 +29,12 @@ const LoginPage = () => {
           const { user, accessToken } = response.data;
           localStorage.setItem("accessToken", accessToken);
           setUser(user);
-          navigate("/");
+
+          if (user.role === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/");
+          }
         },
         onError: (err) => {
           console.error("Login failed", err);
@@ -156,4 +160,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
