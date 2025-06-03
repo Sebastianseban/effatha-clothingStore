@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  FiUsers,
-  FiShoppingCart,
-  FiDollarSign,
-  FiTruck,
-} from "react-icons/fi";
+import { FiUsers, FiShoppingCart, FiDollarSign, FiTruck } from "react-icons/fi";
 import {
   PieChart,
   Pie,
@@ -21,10 +16,34 @@ import {
 } from "recharts";
 
 const stats = [
-  { id: 1, title: "Total Users", value: 1240, icon: FiUsers, iconColor: "text-blue-500" },
-  { id: 2, title: "Orders", value: 560, icon: FiShoppingCart, iconColor: "text-green-500" },
-  { id: 3, title: "Revenue", value: "$12,340", icon: FiDollarSign, iconColor: "text-yellow-500" },
-  { id: 4, title: "Deliveries", value: 34, icon: FiTruck, iconColor: "text-purple-500" },
+  {
+    id: 1,
+    title: "Total Users",
+    value: 1240,
+    icon: FiUsers,
+    iconColor: "text-blue-500",
+  },
+  {
+    id: 2,
+    title: "Orders",
+    value: 560,
+    icon: FiShoppingCart,
+    iconColor: "text-green-500",
+  },
+  {
+    id: 3,
+    title: "Revenue",
+    value: "$12,340",
+    icon: FiDollarSign,
+    iconColor: "text-yellow-500",
+  },
+  {
+    id: 4,
+    title: "Deliveries",
+    value: 34,
+    icon: FiTruck,
+    iconColor: "text-purple-500",
+  },
 ];
 
 // Data for Pie Chart (User types)
@@ -97,7 +116,10 @@ const AdminDashboard = () => {
               label
             >
               {pieData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
               ))}
             </Pie>
             <ReTooltip />
@@ -109,7 +131,12 @@ const AdminDashboard = () => {
           <h2 className="text-2xl font-semibold mb-4 text-gray-700">
             Monthly Orders
           </h2>
-          <BarChart width={350} height={200} data={barData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+          <BarChart
+            width={350}
+            height={200}
+            data={barData}
+            margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
@@ -123,13 +150,23 @@ const AdminDashboard = () => {
           <h2 className="text-2xl font-semibold mb-4 text-gray-700">
             Revenue Over Time
           </h2>
-          <LineChart width={350} height={200} data={lineData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+          <LineChart
+            width={350}
+            height={200}
+            data={lineData}
+            margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
             <YAxis />
             <ReTooltip />
             <Legend />
-            <Line type="monotone" dataKey="revenue" stroke="#10b981" strokeWidth={3} />
+            <Line
+              type="monotone"
+              dataKey="revenue"
+              stroke="#10b981"
+              strokeWidth={3}
+            />
           </LineChart>
         </div>
       </div>
@@ -142,10 +179,18 @@ const AdminDashboard = () => {
         <table className="min-w-full table-auto border-collapse border border-gray-200">
           <thead>
             <tr className="bg-gray-50">
-              <th className="border border-gray-200 px-4 py-2 text-left">Order ID</th>
-              <th className="border border-gray-200 px-4 py-2 text-left">Customer</th>
-              <th className="border border-gray-200 px-4 py-2 text-left">Status</th>
-              <th className="border border-gray-200 px-4 py-2 text-left">Total</th>
+              <th className="border border-gray-200 px-4 py-2 text-left">
+                Order ID
+              </th>
+              <th className="border border-gray-200 px-4 py-2 text-left">
+                Customer
+              </th>
+              <th className="border border-gray-200 px-4 py-2 text-left">
+                Status
+              </th>
+              <th className="border border-gray-200 px-4 py-2 text-left">
+                Total
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -167,7 +212,9 @@ const AdminDashboard = () => {
             </tr>
             <tr>
               <td className="border border-gray-200 px-4 py-2">#1025</td>
-              <td className="border border-gray-200 px-4 py-2">Alice Johnson</td>
+              <td className="border border-gray-200 px-4 py-2">
+                Alice Johnson
+              </td>
               <td className="border border-gray-200 px-4 py-2 text-red-600">
                 Cancelled
               </td>

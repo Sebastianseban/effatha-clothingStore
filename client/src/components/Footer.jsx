@@ -11,7 +11,9 @@ const Footer = () => {
         </div>
 
         <div className="flex flex-col gap-3 col-span-2">
-          <div className="text-amber-50 sm:text-2xl font-light mb-5">Company</div>
+          <div className="text-amber-50 sm:text-2xl font-light mb-5">
+            Company
+          </div>
           <div className="text-amber-50 text-sm sm:text-md">about as</div>
           <div className="text-amber-50 text-sm sm:text-md">bulk orders</div>
         </div>
@@ -20,10 +22,16 @@ const Footer = () => {
           <div className="text-amber-50 sm:text-2xl font-light mb-5 ">
             Get help
           </div>
-          <div className="text-amber-50 text-sm sm:text-md">Return and exchange policy</div>
-          <div className="text-amber-50 text-sm sm:text-md">Shipping policy</div>
+          <div className="text-amber-50 text-sm sm:text-md">
+            Return and exchange policy
+          </div>
+          <div className="text-amber-50 text-sm sm:text-md">
+            Shipping policy
+          </div>
           <div className="text-amber-50 text-sm sm:text-md">Privacy Policy</div>
-          <a className="text-amber-50 text-sm sm:text-md">Terms and Conditions</a>
+          <a className="text-amber-50 text-sm sm:text-md">
+            Terms and Conditions
+          </a>
         </div>
 
         <div className="flex flex-col gap-3 sm:ms-16 col-span-2 mt-6 sm:mt-0">
@@ -38,15 +46,17 @@ const Footer = () => {
       </h1>
       <div className="border border-amber-50 h-[40px] w-[320px] mt-3 text-center flex items-center mx-auto px-2 ">
         <input
-          className="outline-none text-amber-50 placeholder:text-amber-50 font-light w-full" 
+          className="outline-none text-amber-50  placeholder:text-amber-50 font-light w-full"
           type="text"
           placeholder="Email"
         />
-        <MdKeyboardArrowRight className="text-white text-4xl"/>
+        <MdKeyboardArrowRight className="text-white text-4xl" />
       </div>
 
       <div className="mt-16 py-4 ">
-        <p className="text-amber-50 text-xs sm:text-sm font-extralight text-center">© 2025, EFFATHA</p>
+        <p className="text-amber-50 text-xs sm:text-sm font-extralight text-center">
+          © 2025, EFFATHA
+        </p>
       </div>
     </div>
   );

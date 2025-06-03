@@ -1,10 +1,7 @@
 import React from "react";
 import { FiPlusCircle } from "react-icons/fi";
 
-const ProductCard = ( {image}) => {
-
-
-
+const ProductCard = ({ image }) => {
   return (
     <div className="bg-gray-50  shadow-md overflow-hidden min-w-[300px] hover:scale-105 transition-transform duration-300">
       <img src={image} className="w-[300px] h-[300px]  object-cover" />
