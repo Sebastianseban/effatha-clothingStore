@@ -27,12 +27,12 @@ export const createProduct = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All required fields must be filled");
   }
 
-  // Validate images
+
   if (!req.files || !req.files.images || req.files.images.length === 0) {
     throw new ApiError(400, "At least one product image is required");
   }
 
-  // Upload images to Cloudinary
+
   const uploadedImages = [];
   for (let file of req.files.images) {
     const uploaded = await uploadToCloudinary(file.path);
