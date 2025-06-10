@@ -1,3 +1,5 @@
+import mongoose, { Schema } from "mongoose";
+
 const productSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
@@ -5,8 +7,7 @@ const productSchema = new mongoose.Schema(
     description: { type: String, default: "", trim: true },
     price: { type: Number, required: true, min: 0 },
     
-    // Remove `color`, `sizes`, and `images` from the top level
-    // and add variants instead
+   
 
     variants: [
       {
@@ -79,3 +80,5 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+export const Product = mongoose.model("Product", productSchema);
