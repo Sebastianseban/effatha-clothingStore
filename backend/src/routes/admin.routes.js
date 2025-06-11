@@ -20,6 +20,8 @@ router
       { name: "images_7", maxCount: 5 },
       
     ]),
+    verifyJWT,
+    adminOnly,
     createProduct
   );
 
