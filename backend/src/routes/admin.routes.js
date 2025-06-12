@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
-import { createProduct } from "../controllers/admin/admin.controller.js";
+import { createProduct, getAdminProducts } from "../controllers/admin/admin.controller.js";
 import { verifyJWT } from "../middlewares/auth.Middleware.js";
 import { adminOnly } from "../middlewares/adminOnly.js";
 
@@ -24,5 +24,5 @@ router
     adminOnly,
     createProduct
   );
-
+router.route("/products").get(getAdminProducts)
 export default router;
