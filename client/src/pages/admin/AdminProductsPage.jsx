@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
-import AddProduct from "../../components/AddProduct";
+import AddProduct from "../../components/admin/AddProduct";
 
 const products = [
   {

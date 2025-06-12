@@ -1,7 +1,7 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { useAddProduct } from "../hooks/useAddProduct";
+import { useAddProduct } from "../../hooks/useAddProduct";
 import AdminInput from "./AdminInput";
 import { FiTrash2 } from "react-icons/fi";
 
@@ -27,6 +27,18 @@ const AddProduct = ({ onClose }) => {
 
   const { mutate, isLoading, isSuccess, isError, error } = useAddProduct();
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = "auto";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
   const handleVariantChange = (index, field, value) => {
     const updated = [...variants];
     updated[index][field] = value;
@@ -36,8 +48,18 @@ const AddProduct = ({ onClose }) => {
   const handleImageChange = (e, variantIndex) => {
     const files = Array.from(e.target.files);
     const updated = [...variants];
-    updated[variantIndex].images = files;
-    updated[variantIndex].imagePreviews = files.map((file) => URL.createObjectURL(file));
+    updated[variantIndex].images = [...updated[variantIndex].images, ...files];
+    updated[variantIndex].imagePreviews = [
+      ...updated[variantIndex].imagePreviews,
+      ...files.map((file) => URL.createObjectURL(file)),
+    ];
+    setVariants(updated);
+  };
+
+  const handleRemoveImage = (variantIndex, imageIndex) => {
+    const updated = [...variants];
+    updated[variantIndex].images.splice(imageIndex, 1);
+    updated[variantIndex].imagePreviews.splice(imageIndex, 1);
     setVariants(updated);
   };
 
@@ -50,7 +72,12 @@ const AddProduct = ({ onClose }) => {
   const addVariant = () => {
     setVariants([
       ...variants,
-      { color: "", images: [], imagePreviews: [], sizes: [{ size: "", quantity: 0 }] },
+      {
+        color: "",
+        images: [],
+        imagePreviews: [],
+        sizes: [{ size: "", quantity: 0 }],
+      },
     ]);
   };
 
@@ -64,10 +91,26 @@ const AddProduct = ({ onClose }) => {
     setVariants((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const isFormValid = () => {
+    if (!title || !brand || !price || !description || !tags) return false;
+    for (const variant of variants) {
+      if (!variant.color || variant.images.length === 0) return false;
+      for (const size of variant.sizes) {
+        if (!size.size || size.quantity <= 0) return false;
+      }
+    }
+    return true;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData();
 
+    if (!isFormValid()) {
+      alert("Please fill in all required fields correctly.");
+      return;
+    }
+
+    const formData = new FormData();
     formData.append("title", title);
     formData.append("brand", brand);
     formData.append("price", price);
@@ -93,6 +136,20 @@ const AddProduct = ({ onClose }) => {
 
     mutate(formData, {
       onSuccess: () => {
+        setTitle("");
+        setBrand("");
+        setPrice("");
+        setDescription("");
+        setTags("");
+        setDiscount(0);
+        setVariants([
+          {
+            color: "",
+            images: [],
+            imagePreviews: [],
+            sizes: [{ size: "", quantity: 0 }],
+          },
+        ]);
         onClose();
       },
     });
@@ -154,7 +211,7 @@ const AddProduct = ({ onClose }) => {
                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
               >
                 <option value="men">Men</option>
-                <option value="women">Women</option>–
+                <option value="women">Women</option>
                 <option value="unisex">Unisex</option>
               </select>
             </div>
@@ -179,15 +236,16 @@ const AddProduct = ({ onClose }) => {
                 onChange={(e) => setInStock(e.target.checked)}
                 className="accent-blue-600"
               />
-              <label htmlFor="inStock" className="text-sm font-medium text-gray-700">
-                In Stock
-              </label>
+              <label htmlFor="inStock" className="text-sm font-medium text-gray-700">In Stock</label>
             </div>
           </div>
 
           <div className="space-y-6">
             {variants.map((variant, vIndex) => (
-              <div key={vIndex} className="relative p-5 rounded-lg shadow-sm bg-gray-50 space-y-4 border">
+              <div
+                key={vIndex}
+                className="relative p-5 rounded-lg shadow-sm bg-gray-50 space-y-4 border"
+              >
                 <button
                   type="button"
                   className="absolute top-2 right-2 text-red-500 hover:text-red-700"
@@ -195,31 +253,45 @@ const AddProduct = ({ onClose }) => {
                 >
                   <FiTrash2 size={18} />
                 </button>
+
                 <AdminInput
                   label={`Variant ${vIndex + 1} Color`}
                   value={variant.color}
                   onChange={(val) => handleVariantChange(vIndex, "color", val)}
                 />
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Images</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => handleImageChange(e, vIndex)}
-                    className="block w-full border rounded-4xl "
-                  />
+                  <label className="block cursor-pointer text-blue-500 hover:underline">
+                    Upload Images
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => handleImageChange(e, vIndex)}
+                      className="hidden"
+                    />
+                  </label>
                   <div className="flex flex-wrap gap-2 mt-2">
                     {variant.imagePreviews?.map((img, i) => (
-                      <img
-                        key={i}
-                        src={img}
-                        alt="preview"
-                        className="w-16 h-16 object-cover rounded border"
-                      />
+                      <div key={i} className="relative group">
+                        <img
+                          src={img}
+                          alt="preview"
+                          className="w-16 h-16 object-cover rounded border"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(vIndex, i)}
+                          className="absolute top-[-6px] right-[-6px] bg-red-500 text-white rounded-full p-1 text-xs opacity-80 group-hover:opacity-100"
+                        >
+                          ×
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Sizes & Quantity</label>
                   {variant.sizes.map((s, sIndex) => (
@@ -228,14 +300,18 @@ const AddProduct = ({ onClose }) => {
                         type="text"
                         placeholder="Size (e.g., M)"
                         value={s.size}
-                        onChange={(e) => handleSizeChange(vIndex, sIndex, "size", e.target.value)}
+                        onChange={(e) =>
+                          handleSizeChange(vIndex, sIndex, "size", e.target.value)
+                        }
                         className="border px-3 py-1 rounded w-1/2"
                       />
                       <input
                         type="number"
                         placeholder="Quantity"
                         value={s.quantity}
-                        onChange={(e) => handleSizeChange(vIndex, sIndex, "quantity", e.target.value)}
+                        onChange={(e) =>
+                          handleSizeChange(vIndex, sIndex, "quantity", e.target.value)
+                        }
                         className="border px-3 py-1 rounded w-1/2"
                       />
                     </div>
@@ -250,6 +326,7 @@ const AddProduct = ({ onClose }) => {
                 </div>
               </div>
             ))}
+
             <button
               type="button"
               onClick={addVariant}
@@ -275,8 +352,17 @@ const AddProduct = ({ onClose }) => {
               {isLoading ? "Adding..." : "Add Product"}
             </button>
           </div>
-          {isError && <p className="text-red-600">Error: {error.message}</p>}
-          {isSuccess && <p className="text-green-600">Product added successfully!</p>}
+
+          {isError && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded">
+              Error: {error.message}
+            </div>
+          )}
+          {isSuccess && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded">
+              Product added successfully!
+            </div>
+          )}
         </form>
       </div>
     </div>,
