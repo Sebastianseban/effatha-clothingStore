@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { useAddProduct } from "../../hooks/useAddProduct";
 import AdminInput from "./AdminInput";
@@ -26,6 +27,18 @@ const AddProduct = ({ onClose }) => {
 
   const { mutate, isLoading, isSuccess, isError, error } = useAddProduct();
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = "auto";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
   const handleVariantChange = (index, field, value) => {
     const updated = [...variants];
     updated[index][field] = value;
@@ -35,10 +48,18 @@ const AddProduct = ({ onClose }) => {
   const handleImageChange = (e, variantIndex) => {
     const files = Array.from(e.target.files);
     const updated = [...variants];
-    updated[variantIndex].images = files;
-    updated[variantIndex].imagePreviews = files.map((file) =>
-      URL.createObjectURL(file)
-    );
+    updated[variantIndex].images = [...updated[variantIndex].images, ...files];
+    updated[variantIndex].imagePreviews = [
+      ...updated[variantIndex].imagePreviews,
+      ...files.map((file) => URL.createObjectURL(file)),
+    ];
+    setVariants(updated);
+  };
+
+  const handleRemoveImage = (variantIndex, imageIndex) => {
+    const updated = [...variants];
+    updated[variantIndex].images.splice(imageIndex, 1);
+    updated[variantIndex].imagePreviews.splice(imageIndex, 1);
     setVariants(updated);
   };
 
@@ -70,10 +91,26 @@ const AddProduct = ({ onClose }) => {
     setVariants((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const isFormValid = () => {
+    if (!title || !brand || !price || !description || !tags) return false;
+    for (const variant of variants) {
+      if (!variant.color || variant.images.length === 0) return false;
+      for (const size of variant.sizes) {
+        if (!size.size || size.quantity <= 0) return false;
+      }
+    }
+    return true;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData();
 
+    if (!isFormValid()) {
+      alert("Please fill in all required fields correctly.");
+      return;
+    }
+
+    const formData = new FormData();
     formData.append("title", title);
     formData.append("brand", brand);
     formData.append("price", price);
@@ -99,6 +136,20 @@ const AddProduct = ({ onClose }) => {
 
     mutate(formData, {
       onSuccess: () => {
+        setTitle("");
+        setBrand("");
+        setPrice("");
+        setDescription("");
+        setTags("");
+        setDiscount(0);
+        setVariants([
+          {
+            color: "",
+            images: [],
+            imagePreviews: [],
+            sizes: [{ size: "", quantity: 0 }],
+          },
+        ]);
         onClose();
       },
     });
@@ -122,35 +173,15 @@ const AddProduct = ({ onClose }) => {
           className="p-6 overflow-y-auto h-full space-y-6"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <AdminInput
-              label="Product Title"
-              value={title}
-              onChange={setTitle}
-            />
+            <AdminInput label="Product Title" value={title} onChange={setTitle} />
             <AdminInput label="Brand" value={brand} onChange={setBrand} />
-            <AdminInput
-              type="number"
-              label="Price (₹)"
-              value={price}
-              onChange={setPrice}
-            />
-            <AdminInput
-              label="Tags (comma-separated)"
-              value={tags}
-              onChange={setTags}
-            />
-            <AdminInput
-              label="Discount (%)"
-              type="number"
-              value={discount}
-              onChange={setDiscount}
-            />
+            <AdminInput type="number" label="Price (₹)" value={price} onChange={setPrice} />
+            <AdminInput label="Tags (comma-separated)" value={tags} onChange={setTags} />
+            <AdminInput label="Discount (%)" type="number" value={discount} onChange={setDiscount} />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
-            </label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -161,9 +192,7 @@ const AddProduct = ({ onClose }) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Category
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -175,23 +204,19 @@ const AddProduct = ({ onClose }) => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Gender
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg px-4 py-2"
               >
                 <option value="men">Men</option>
-                <option value="women">Women</option>–
+                <option value="women">Women</option>
                 <option value="unisex">Unisex</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Highlight Type
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Highlight Type</label>
               <select
                 value={highLightTypes}
                 onChange={(e) => setHighLightTypes(e.target.value)}
@@ -211,12 +236,7 @@ const AddProduct = ({ onClose }) => {
                 onChange={(e) => setInStock(e.target.checked)}
                 className="accent-blue-600"
               />
-              <label
-                htmlFor="inStock"
-                className="text-sm font-medium text-gray-700"
-              >
-                In Stock
-              </label>
+              <label htmlFor="inStock" className="text-sm font-medium text-gray-700">In Stock</label>
             </div>
           </div>
 
@@ -233,37 +253,47 @@ const AddProduct = ({ onClose }) => {
                 >
                   <FiTrash2 size={18} />
                 </button>
+
                 <AdminInput
                   label={`Variant ${vIndex + 1} Color`}
                   value={variant.color}
                   onChange={(val) => handleVariantChange(vIndex, "color", val)}
                 />
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Images
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Images</label>
+                  <label className="block cursor-pointer text-blue-500 hover:underline">
+                    Upload Images
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={(e) => handleImageChange(e, vIndex)}
+                      className="hidden"
+                    />
                   </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => handleImageChange(e, vIndex)}
-                    className="block w-full border rounded-4xl "
-                  />
                   <div className="flex flex-wrap gap-2 mt-2">
                     {variant.imagePreviews?.map((img, i) => (
-                      <img
-                        key={i}
-                        src={img}
-                        alt="preview"
-                        className="w-16 h-16 object-cover rounded border"
-                      />
+                      <div key={i} className="relative group">
+                        <img
+                          src={img}
+                          alt="preview"
+                          className="w-16 h-16 object-cover rounded border"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveImage(vIndex, i)}
+                          className="absolute top-[-6px] right-[-6px] bg-red-500 text-white rounded-full p-1 text-xs opacity-80 group-hover:opacity-100"
+                        >
+                          ×
+                        </button>
+                      </div>
                     ))}
                   </div>
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Sizes & Quantity
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Sizes & Quantity</label>
                   {variant.sizes.map((s, sIndex) => (
                     <div key={sIndex} className="flex gap-4 mb-2">
                       <input
@@ -271,12 +301,7 @@ const AddProduct = ({ onClose }) => {
                         placeholder="Size (e.g., M)"
                         value={s.size}
                         onChange={(e) =>
-                          handleSizeChange(
-                            vIndex,
-                            sIndex,
-                            "size",
-                            e.target.value
-                          )
+                          handleSizeChange(vIndex, sIndex, "size", e.target.value)
                         }
                         className="border px-3 py-1 rounded w-1/2"
                       />
@@ -285,12 +310,7 @@ const AddProduct = ({ onClose }) => {
                         placeholder="Quantity"
                         value={s.quantity}
                         onChange={(e) =>
-                          handleSizeChange(
-                            vIndex,
-                            sIndex,
-                            "quantity",
-                            e.target.value
-                          )
+                          handleSizeChange(vIndex, sIndex, "quantity", e.target.value)
                         }
                         className="border px-3 py-1 rounded w-1/2"
                       />
@@ -306,6 +326,7 @@ const AddProduct = ({ onClose }) => {
                 </div>
               </div>
             ))}
+
             <button
               type="button"
               onClick={addVariant}
@@ -331,9 +352,16 @@ const AddProduct = ({ onClose }) => {
               {isLoading ? "Adding..." : "Add Product"}
             </button>
           </div>
-          {isError && <p className="text-red-600">Error: {error.message}</p>}
+
+          {isError && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded">
+              Error: {error.message}
+            </div>
+          )}
           {isSuccess && (
-            <p className="text-green-600">Product added successfully!</p>
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded">
+              Product added successfully!
+            </div>
           )}
         </form>
       </div>
