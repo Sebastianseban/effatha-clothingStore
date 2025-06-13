@@ -1,11 +1,16 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "../ProductCard";
 import { FaAngleLeft } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
+import { useHighlights } from "../../hooks/useHighlights";
 
-const Section2 = ({ title, viewAllLink }) => {
+const Section2 = ({ title, viewAllLink, type }) => {
+  const { data: products, isLoading, isError } = useHighlights(type);
+
+  if (isLoading) return <div className="px-16 py-8">Loading...</div>;
+  if (isError) return <div className="px-16 py-8">Failed to load products</div>;
+
   return (
     <div className="w-full py-4">
       {/* Title & View All */}
@@ -25,10 +30,16 @@ const Section2 = ({ title, viewAllLink }) => {
         <FaAngleRight className="hidden md:block absolute top-1/2 -translate-y-1/2 right-4 text-3xl z-10 cursor-pointer" />
 
         <div className="flex gap-4 sm:gap-6 overflow-x-auto overflow-y-hidden pb-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-          <ProductCard image="tshirt.png" />
-          <ProductCard image="card2.png" />
-          <ProductCard image="tshirt.png" />
-          <ProductCard image="card2.png" />
+          {products.map((product) => (
+            <ProductCard
+              key={product._id}
+              image={product.image}
+              title={product.title}
+              brand={product.brand}
+              color={product.color}
+              price={product.price}
+            />
+          ))}
         </div>
       </div>
     </div>

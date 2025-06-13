@@ -10,8 +10,8 @@ const HomePage = () => {
     <div>
    <Section1/>
   <div className="px-8" >
-  <Section2 title="NEW ARRIVAL" viewAllLink="/collections/newArrivals"/>
-  <Section2 title="BEST SELLER"/>
+  <Section2 title="NEW ARRIVAL" viewAllLink="/collections/newArrivals" type="new_arrival"/>
+  <Section2 title="BEST SELLER" type="best_seller"/>
   </div>
 
    
