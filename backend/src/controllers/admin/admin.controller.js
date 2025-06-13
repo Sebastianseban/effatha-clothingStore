@@ -94,35 +94,7 @@ export const createProduct = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, product, "Product created successfully"));
 });
 
-// export const getAdminProducts = asyncHandler(async (req, res) => {
-//   const products = await Product.find()
-//     .select("title price category highLightTypes variants slug")
-//     .sort({ createdAt: -1 });
 
-  
-//   const formattedProducts = products.map((product) => {
-//     const totalStock = product.variants.reduce((acc, variant) => {
-//       const sizeQtySum = variant.sizes.reduce((sum, s) => sum + s.quantity, 0);
-//       return acc + sizeQtySum;
-//     }, 0);
-
-//     return {
-//       _id: product._id,
-//       title: product.title,
-//       price: product.price,
-//       category: product.category,
-//       highLightTypes: product.highLightTypes,
-//       color: product.variants[0]?.color || "-",
-//       sizes: product.variants[0]?.sizes?.map((s) => s.name) || [],
-//       stockNumber: totalStock,
-//       image: product.variants[0]?.images?.[0] || "", // first image of first variant
-//     };
-//   });
-
-//   return res
-//     .status(200)
-//     .json(new ApiResponse(200, formattedProducts, "Admin products fetched"));
-// });
 export const getAdminProducts = asyncHandler(async (req, res) => {
   const products = await Product.find()
     .select("title price category highLightTypes variants slug")
