@@ -169,7 +169,13 @@ export const createProduct = asyncHandler(async (req, res) => {
     });
   }
 
-  const slug = title.toLowerCase().replace(/\s+/g, "-");
+   const baseSlug = title.toLowerCase().replace(/\s+/g, "-");
+  let slug = baseSlug;
+  let count = 1;
+  while (await Product.findOne({ slug })) {
+    slug = `${baseSlug}-${count}`;
+    count++;
+  }
 
   let product;
 

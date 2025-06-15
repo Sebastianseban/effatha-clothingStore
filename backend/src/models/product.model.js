@@ -1,13 +1,12 @@
 import mongoose, { Schema } from "mongoose";
 
+
 const productSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
     brand: { type: String, required: true, trim: true },
     description: { type: String, default: "", trim: true },
     price: { type: Number, required: true, min: 0 },
-    
-   
 
     variants: [
       {
@@ -60,6 +59,7 @@ const productSchema = new mongoose.Schema(
       type: String,
       lowercase: true,
       trim: true,
+      unique: true,
     },
     tags: {
       type: [String],
@@ -80,5 +80,8 @@ const productSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+
+
 
 export const Product = mongoose.model("Product", productSchema);

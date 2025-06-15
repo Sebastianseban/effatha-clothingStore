@@ -1,6 +1,7 @@
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { Product } from "../../models/product.model.js";
-import {ApiResponse} from "../../utils/ApiResponse.js"
+import { ApiResponse } from "../../utils/ApiResponse.js";
+import { ApiError } from "../../utils/ApiError.js";
 
 export const getHighlightedProducts = asyncHandler(async (req, res) => {
   const { type } = req.params;
@@ -33,7 +34,25 @@ export const getHighlightedProducts = asyncHandler(async (req, res) => {
     };
   });
 
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, formattedProducts, `Products for ${type} fetched`)
+    );
+});
+
+export const getProductBySlug = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+
+  const product = await Product.findOne({
+    slug: { $regex: new RegExp(`^${slug}$`, "i") },
+  }).select("-__v");
+
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
+
   return res.status(200).json(
-    new ApiResponse(200, formattedProducts, `Products for ${type} fetched`)
+    new ApiResponse(200, product, "Product found successfully")
   );
 });
