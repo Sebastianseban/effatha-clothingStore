@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { useLogout } from "../hooks/useLogout"; // adjust path if needed
+import { useLogout } from "../hooks/user/useLogout"; // adjust path if needed
 
 const SideBar = ({ onClose }) => {
   const { mutate: logout, isLoading } = useLogout();

@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import ProductCard from "../ProductCard";
 import { FaAngleLeft } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
-import { useHighlights } from "../../hooks/useHighlights";
+import { useHighlights } from "../../hooks/user/useHighlights";
+
 
 const Section2 = ({ title, viewAllLink, type }) => {
   const { data: products, isLoading, isError } = useHighlights(type);

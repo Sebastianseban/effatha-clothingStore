@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from '../axiosInstance'
 
 export const logoutUser = async () => {
   const response = await axiosInstance.post('/users/logout');

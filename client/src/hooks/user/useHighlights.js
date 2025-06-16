@@ -1,11 +1,9 @@
 // src/hooks/useHighlights.js
 import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "../api/axiosInstance";
+import { fetchHighlights } from "../../api/user/getHighlights";
 
-const fetchHighlights = async (type) => {
-  const res = await axiosInstance.get(`/product/highlights/${type}`);
-  return res.data.data; 
-};
+
+
 
 export const useHighlights = (type) => {
   return useQuery({
