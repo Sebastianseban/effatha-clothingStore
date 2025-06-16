@@ -1,5 +1,5 @@
+import axiosInstance from "../axiosInstance";
 
-import axiosInstance from "./axiosInstance";
 
 export const addProduct = async (formData) => {
   const response = await axiosInstance.post("/admin/add-product", formData, {
