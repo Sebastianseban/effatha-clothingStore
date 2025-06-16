@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { useAddProduct } from "../../hooks/useAddProduct";
+
 import AdminInput from "./AdminInput";
 import { FiTrash2 } from "react-icons/fi";
+import { useAddProduct } from "../../hooks/admin/useAddProduct";
 
 const AddProduct = ({ onClose }) => {
   const [title, setTitle] = useState("");

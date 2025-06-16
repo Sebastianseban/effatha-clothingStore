@@ -93,7 +93,7 @@
 import React, { useState } from "react";
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import AddProduct from "../../components/admin/AddProduct";
-import { useAdminProducts } from "../../hooks/useProducts";
+import { useAdminProducts } from "../../hooks/admin/useProducts";
 
 const AdminProductsPage = () => {
   const [showAddProduct, setAddProduct] = useState(false);
