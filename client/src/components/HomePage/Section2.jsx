@@ -5,7 +5,6 @@ import { FaAngleLeft } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
 import { useHighlights } from "../../hooks/user/useHighlights";
 
-
 const Section2 = ({ title, viewAllLink, type }) => {
   const { data: products, isLoading, isError } = useHighlights(type);
 
@@ -32,14 +31,15 @@ const Section2 = ({ title, viewAllLink, type }) => {
 
         <div className="flex gap-4 sm:gap-6 overflow-x-auto overflow-y-hidden pb-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
           {products.map((product) => (
-            <ProductCard
-              key={product._id}
-              image={product.image}
-              title={product.title}
-              brand={product.brand}
-              color={product.color}
-              price={product.price}
-            />
+            <Link key={product._id} to={`/product/${product.slug}`}>
+              <ProductCard
+                image={product.image}
+                title={product.title}
+                brand={product.brand}
+                color={product.color}
+                price={product.price}
+              />
+            </Link>
           ))}
         </div>
       </div>
