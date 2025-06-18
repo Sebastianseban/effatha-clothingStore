@@ -5,10 +5,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 import InputField from "../components/InputField";
-import { useRegister } from "../hooks/useRegister";
+
 import useUserStore from "../store/userStore";
 import axiosInstance from "../api/axiosInstance";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useRegister } from "../hooks/user/useRegister";
+
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);

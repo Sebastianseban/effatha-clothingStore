@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import InputField from "../components/InputField";
-import { useLogin } from "../hooks/useLogin";
+
 import useUserStore from "../store/userStore";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../api/axiosInstance";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useLogin } from "../hooks/user/useLogin";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");

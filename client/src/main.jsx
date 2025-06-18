@@ -14,7 +14,9 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
 import AdminProductsPage from "./pages/admin/AdminProductsPage.jsx";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
+;
+import PublicRoute from "./routes/PublicRoute.jsx";
+import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 
 const queryClient = new QueryClient();
 
@@ -29,9 +31,25 @@ const router = createBrowserRouter([
       { path: "/", element: <HomePage /> },
       { path: "collections", element: <CollectionPage /> },
       { path: "collections/newArrivals", element: <NewArrivals /> },
-      { path: "signup", element: <SignUpPage /> },
-      { path: "login", element: <LoginPage /> },
-      { path: "products", element: <ProductPage /> },
+
+      {
+        path: "signup",
+        element: (
+          <PublicRoute>
+            <SignUpPage />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "login",
+        element: (
+          <PublicRoute>
+            <LoginPage />
+          </PublicRoute>
+        ),
+      },
+
+      { path: "product/:slug", element: <ProductPage /> },
     ],
   },
 

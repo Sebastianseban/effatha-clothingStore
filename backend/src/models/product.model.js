@@ -1,43 +1,40 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
+
 
 const productSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    brand: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    description: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    color: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    sizes: [
+    title: { type: String, required: true, trim: true },
+    brand: { type: String, required: true, trim: true },
+    description: { type: String, default: "", trim: true },
+    price: { type: Number, required: true, min: 0 },
+
+    variants: [
       {
-        type: String,
-        enum: ["S", "M", "L", "XL", "XXL"],
+        color: { type: String, required: true, trim: true },
+        images: {
+          type: [String],
+          required: true,
+          validate: {
+            validator: (array) => array.length > 0,
+            message: "At least one image is required",
+          },
+        },
+        sizes: [
+          {
+            size: {
+              type: String,
+              enum: ["S", "M", "L", "XL", "XXL"],
+            },
+            quantity: {
+              type: Number,
+              default: 0,
+              min: 0,
+            },
+          },
+        ],
       },
     ],
-    images: {
-      type: [String],
-      required: true,
-      validate: [(array) => array.length > 0, "At least one image is required"],
-    },
+
     highLightTypes: {
       type: String,
       enum: ["new_arrival", "best_seller", "popular"],
@@ -53,15 +50,38 @@ const productSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    stockNumber: {
-      type: Number,
+    gender: {
+      type: String,
+      enum: ["men", "women", "unisex"],
       required: true,
+    },
+    slug: {
+      type: String,
+      lowercase: true,
+      trim: true,
+      unique: true,
+    },
+    tags: {
+      type: [String],
+      default: [],
+    },
+    discount: {
+      type: Number,
       min: 0,
+      max: 100,
+      default: 0,
+    },
+    soldCount: {
+      type: Number,
+      default: 0,
     },
   },
   {
     timestamps: true,
   }
 );
+
+
+
 
 export const Product = mongoose.model("Product", productSchema);

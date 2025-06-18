@@ -4,61 +4,233 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { uploadToCloudinary } from "../../utils/cloudinary.js";
 
+// export const createProduct = asyncHandler(async (req, res) => {
+//   const {
+//     title,
+//     brand,
+//     description,
+//     price,
+//     category,
+//     highLightTypes,
+//     gender,
+//     discount,
+//     tags,
+//     variants,
+//   } = req.body;
+
+//   if (
+//     [title, brand, price, category, gender].some((field) => !field?.trim()) ||
+//     !variants
+//   ) {
+//     throw new ApiError(400, "All required fields must be filled");
+//   }
+
+//   let parsedVariants;
+
+//   try {
+//     parsedVariants = JSON.parse(variants); // Parse from string
+//   } catch (err) {
+//     throw new ApiError(400, "Variants must be a valid JSON array");
+//   }
+
+//   if (!Array.isArray(parsedVariants) || parsedVariants.length === 0) {
+//     throw new ApiError(400, "At least one product variant is required");
+//   }
+
+//   const processedVariants = [];
+
+//   for (let i = 0; i < parsedVariants.length; i++) {
+//     const variant = parsedVariants[i];
+//     const { color, sizes } = variant;
+
+//     if (!color?.trim() || !Array.isArray(sizes) || sizes.length === 0) {
+//       throw new ApiError(
+//         400,
+//         `Color and sizes are required for variant ${i + 1}`
+//       );
+//     }
+//     console.log("req files" + req.files.images_0);
+//     const imageFiles = req.files?.[`images_${i}`];
+//     if (!imageFiles || imageFiles.length === 0) {
+//       throw new ApiError(400, `Images are required for variant ${i + 1}`);
+//     }
+
+//     const uploadedImages = [];
+//     for (let file of imageFiles) {
+//       const uploaded = await uploadToCloudinary(file.path);
+//       if (uploaded?.url) uploadedImages.push(uploaded.url);
+//     }
+
+//     if (uploadedImages.length === 0) {
+//       throw new ApiError(500, `Failed to upload images for variant ${i + 1}`);
+//     }
+
+//     processedVariants.push({
+//       color,
+//       images: uploadedImages,
+//       sizes,
+//     });
+//   }
+
+//   // Create slug
+//   const slug = title.toLowerCase().replace(/\s+/g, "-");
+
+//   const product = await Product.create({
+//     title: title.trim(),
+//     brand: brand.trim(),
+//     description,
+//     price,
+//     category: category.trim(),
+//     highLightTypes: highLightTypes?.trim(), // fix here
+//     gender: gender.trim(), // and here
+//     discount: discount || 0,
+//     tags: tags || [],
+//     slug,
+//     variants: processedVariants,
+//   });
+
+//   return res
+//     .status(201)
+//     .json(new ApiResponse(201, product, "Product created successfully"));
+// });
+
+
 export const createProduct = asyncHandler(async (req, res) => {
   const {
     title,
     brand,
     description,
     price,
-    color,
-    sizes,
     category,
-    inStock,
-    stockNumber,
     highLightTypes,
+    gender,
+    discount,
+    tags,
+    variants,
   } = req.body;
 
-  // Validate required fields
   if (
-    [title, brand, price, color, category].some(field => !field?.trim()) ||
-    !sizes?.length ||
-    stockNumber === undefined
+    [title, brand, price, category, gender].some((field) => !field?.trim()) ||
+    !variants
   ) {
     throw new ApiError(400, "All required fields must be filled");
   }
 
-  // Validate images
-  if (!req.files || !req.files.images || req.files.images.length === 0) {
-    throw new ApiError(400, "At least one product image is required");
+  let parsedVariants;
+
+  try {
+    parsedVariants = JSON.parse(variants);
+  } catch (err) {
+    throw new ApiError(400, "Variants must be a valid JSON array");
   }
 
-  // Upload images to Cloudinary
-  const uploadedImages = [];
-  for (let file of req.files.images) {
-    const uploaded = await uploadToCloudinary(file.path);
-    if (uploaded?.url) uploadedImages.push(uploaded.url);
+  if (!Array.isArray(parsedVariants) || parsedVariants.length === 0) {
+    throw new ApiError(400, "At least one product variant is required");
   }
 
-  if (uploadedImages.length === 0) {
-    throw new ApiError(500, "Failed to upload images");
+  const processedVariants = [];
+  const uploadedPublicIds = []; // for rollback
+
+  for (let i = 0; i < parsedVariants.length; i++) {
+    const variant = parsedVariants[i];
+    const { color, sizes } = variant;
+
+    if (!color?.trim() || !Array.isArray(sizes) || sizes.length === 0) {
+      // Rollback any uploaded images
+      await Promise.all(uploadedPublicIds.map((id) => deleteFromCloudinary(id)));
+      throw new ApiError(400, `Color and sizes are required for variant ${i + 1}`);
+    }
+
+    const imageFiles = req.files?.[`images_${i}`];
+    if (!imageFiles || imageFiles.length === 0) {
+      await Promise.all(uploadedPublicIds.map((id) => deleteFromCloudinary(id)));
+      throw new ApiError(400, `Images are required for variant ${i + 1}`);
+    }
+
+    const uploadedImages = [];
+
+    for (let file of imageFiles) {
+      const uploaded = await uploadToCloudinary(file.path);
+      if (uploaded?.url) {
+        uploadedImages.push(uploaded.url);
+        uploadedPublicIds.push(uploaded.public_id);
+      }
+    }
+
+    if (uploadedImages.length === 0) {
+      await Promise.all(uploadedPublicIds.map((id) => deleteFromCloudinary(id)));
+      throw new ApiError(500, `Failed to upload images for variant ${i + 1}`);
+    }
+
+    processedVariants.push({
+      color,
+      images: uploadedImages,
+      sizes,
+    });
   }
 
-  // Create product
-  const product = await Product.create({
-    title,
-    brand,
-    description,
-    price,
-    color,
-    sizes,
-    images: uploadedImages,
-    category,
-    inStock: inStock ?? true,
-    stockNumber,
-    highLightTypes,
-  });
+   const baseSlug = title.toLowerCase().replace(/\s+/g, "-");
+  let slug = baseSlug;
+  let count = 1;
+  while (await Product.findOne({ slug })) {
+    slug = `${baseSlug}-${count}`;
+    count++;
+  }
+
+  let product;
+
+  try {
+    product = await Product.create({
+      title: title.trim(),
+      brand: brand.trim(),
+      description,
+      price,
+      category: category.trim(),
+      highLightTypes: highLightTypes?.trim(),
+      gender: gender.trim(),
+      discount: discount || 0,
+      tags: tags || [],
+      slug,
+      variants: processedVariants,
+    });
+  } catch (err) {
+    // On DB error, rollback uploaded images
+    await Promise.all(uploadedPublicIds.map((id) => deleteFromCloudinary(id)));
+    throw new ApiError(500, "Failed to save product to database");
+  }
 
   return res
     .status(201)
     .json(new ApiResponse(201, product, "Product created successfully"));
+});
+
+export const getAdminProducts = asyncHandler(async (req, res) => {
+  const products = await Product.find()
+    .select("title price category highLightTypes variants slug")
+    .sort({ createdAt: -1 });
+
+  const formattedProducts = products.map((product) => {
+    const totalStock = product.variants.reduce((acc, variant) => {
+      const sizeQtySum = variant.sizes.reduce((sum, s) => sum + s.quantity, 0);
+      return acc + sizeQtySum;
+    }, 0);
+
+    const firstVariant = product.variants[0];
+
+    return {
+      _id: product._id,
+      title: product.title,
+      price: product.price,
+      category: product.category,
+      highLightTypes: product.highLightTypes,
+      color: firstVariant?.color || "-",
+      sizes: firstVariant?.sizes?.map((s) => s.size) || [],
+      stockNumber: totalStock,
+      image: firstVariant?.images?.[0] || "", // fallback to empty if no image
+    };
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, formattedProducts, "Admin products fetched"));
 });

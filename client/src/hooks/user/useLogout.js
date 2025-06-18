@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { logoutUser } from '../api/user';
-import useUserStore from '../store/userStore';
+import { logoutUser } from '../../api/user/logoutApi';
+import useUserStore from '../../store/userStore';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
