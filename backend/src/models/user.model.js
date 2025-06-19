@@ -2,7 +2,6 @@ import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -54,11 +53,26 @@ const userSchema = new mongoose.Schema(
       enum: ["local", "google"],
     },
     role: {
-      type:String,
-      enum:["user","admin"],
-      default:"user"
-      
-    }
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+
+    addresses: [
+      {
+        street: { type: String, required: true },
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        postalCode: { type: String, required: true },
+        country: { type: String, default: "India" },
+        label: {
+          type: String,
+          enum: ["home", "work", "other"],
+          default: "home",
+        },
+        isDefault: { type: Boolean, default: false },
+      },
+    ],
   },
   { timestamps: true }
 );
