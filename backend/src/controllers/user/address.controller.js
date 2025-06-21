@@ -33,3 +33,139 @@ export const addAddress = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, user.addresses, "Address added successfully"));
 });
+
+export const getAllAddress = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const addresses = user.addresses;
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, addresses, "All addresses fetched successfully")
+    );
+});
+
+export const updateAddress = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { addressId } = req.params;
+  const { street, city, state, postalCode, country, label, isDefault } =
+    req.body;
+
+  const user = User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "user not found");
+  }
+
+  const address = user.addresses.id(addressId);
+  if (!address) {
+    throw new ApiError(404, "Address not found");
+  }
+
+  address.street = street || address.street;
+  address.city = city || address.city;
+  address.state = state || address.state;
+  address.postalCode = postalCode || address.postalCode;
+  address.country = country || address.country;
+  address.label = label || address.label;
+
+  if (isDefault) {
+    user.addresses.forEach((addr) => (addr.isDefault = false));
+    address.isDefault = true;
+  }
+
+  await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user.addresses, "Address updated successfully"));
+});
+
+export const deleteAddress = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { addressId } = req.params;
+
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "user not found");
+  }
+
+  const address = user.addresses.id(addressId);
+
+  if (!address) {
+    throw new ApiError(404, "Address not found");
+  }
+
+  address.remove();
+  await user.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user.addresses, "Address deleted successfully"));
+});
+
+export const setDefaultAddress = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const userId = req.user._id;
+  const { addressId } = req.params;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const address = user.addresses.id(addressId);
+  if (!address) {
+    throw new ApiError(404, "Address not found");
+  }
+
+  user.addresses.forEach((addr) => (addr.isDefault = false));
+
+  address.isDefault = true;
+
+  await user.save();
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        user.addresses,
+        "Default address updated successfully"
+      )
+    );
+});
+
+export const getDefaultAddress = asyncHandler(async (req, res) => {
+  if (!req.user || !req.user._id) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const userId = req.user._id;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const defaultAddress = user.addresses.find((addr) => addr.isDefault);
+
+  if (!defaultAddress) {
+    throw new ApiError(404, "Default address not set");
+  }
+
+  return res.status(200).json(
+    new ApiResponse(200, defaultAddress, "Default address fetched successfully")
+  );
+});
