@@ -29,6 +29,6 @@ import addressRoutes from "./routes/addresses.route.js";
 app.use("/api/v1/users",userRouter)
 app.use("/api/v1/admin",adminRouter)
 app.use("/api/v1/product",productRouter)
-app.use("/api/user/addresses", addressRoutes);
+app.use("/api/v1/users/addresses", addressRoutes);
 
 export { app }

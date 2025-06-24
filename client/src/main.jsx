@@ -14,9 +14,10 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
 import AdminProductsPage from "./pages/admin/AdminProductsPage.jsx";
-;
 import PublicRoute from "./routes/PublicRoute.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import UserProfilePage from "./pages/user/userProfilePage.jsx";
+import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
       },
 
       { path: "product/:slug", element: <ProductPage /> },
+      { path: "account", element: <UserProfilePage /> },
     ],
   },
 
@@ -73,6 +75,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
+        <Toaster position="top-right" reverseOrder={false} />
         <RouterProvider router={router} />
       </QueryClientProvider>
     </GoogleOAuthProvider>
