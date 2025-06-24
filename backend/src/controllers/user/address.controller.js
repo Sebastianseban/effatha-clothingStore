@@ -14,6 +14,10 @@ export const addAddress = asyncHandler(async (req, res) => {
     throw new ApiError(404, "user not found");
   }
 
+  if (user.addresses.length >= 2) {
+    throw new ApiError(400, "You can only save up to 2 addresses.");
+  }
+
   if (isDefault) {
     user.addresses.forEach((addr) => (addr.isDefault = false));
   }
