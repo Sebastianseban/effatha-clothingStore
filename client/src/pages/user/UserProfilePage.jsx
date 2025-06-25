@@ -3,13 +3,18 @@ import { FaRegUser } from "react-icons/fa6";
 import AddAddressPopup from "../../components/user/AddAddressPopup";
 import useUserStore from "../../store/userStore";
 import AddressCard from "../../components/user/AddressCard";
+import { useGetAddress } from "../../hooks/user/useGetAddress";
 
 const UserProfilePage = () => {
   const [showAddAddress, setShowAddAddress] = useState(false);
   const { user } = useUserStore();
 
-  const handleAddressPopup = () => setShowAddAddress(true);
+  const { data: addressResponse, isPending, isError } = useGetAddress();
 
+  const handleAddressPopup = () => setShowAddAddress(true);
+  if (!user) {
+    return <p className="text-center text-gray-600">Loading profile...</p>;
+  }
   return (
     <div className="max-w-3xl h-[600px] mx-auto px-4 py-10">
       {/* Profile Header */}
@@ -45,8 +50,13 @@ const UserProfilePage = () => {
 
         {/* Address Card (Static Example) */}
         <div className="grid grid-cols-2 gap-4 rounded-lg p-4 bg-gray-200 mb-4 shadow-sm">
-          <AddressCard />
-          <AddressCard />
+          {isPending && <p>Loading...</p>}
+          {isError && <p>Failed to load addresses.</p>}
+          {!isPending &&
+            !isError &&
+            addressResponse.map((address) => (
+              <AddressCard key={address._id} address={address} />
+            ))}
         </div>
       </div>
     </div>
