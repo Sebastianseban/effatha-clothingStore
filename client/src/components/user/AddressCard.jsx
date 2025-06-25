@@ -2,10 +2,11 @@
 import React from "react";
 import { PiMapPinLineLight } from "react-icons/pi";
 import { FiEdit, FiTrash2, FiStar } from "react-icons/fi";
+import { useSetDefaultAddress } from "../../hooks/user/useSetDefaultAddress";
 // import { useSetDefaultAddress } from "../../hooks/user/useSetDefaultAddress";
 
 const AddressCard = ({ address }) => {
-  // const { mutate: setDefault } = useSetDefaultAddress();
+  const { mutate: setDefault,isPending } = useSetDefaultAddress();
 
   return (
     <div className="relative bg-white border border-gray-200 rounded-xl p-5 shadow-md transition hover:shadow-lg">
@@ -36,7 +37,7 @@ const AddressCard = ({ address }) => {
       <div className="flex justify-end gap-4 mt-5 text-sm text-gray-500">
         {!address.isDefault && (
           <button
-            // onClick={() => setDefault(address._id)}
+            onClick={() => setDefault(address._id)}
             className="flex items-center gap-1 hover:text-blue-600 transition"
           >
             <FiStar className="text-base" />
