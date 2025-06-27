@@ -7,11 +7,27 @@ import { useGetAddress } from "../../hooks/user/useGetAddress";
 
 const UserProfilePage = () => {
   const [showAddAddress, setShowAddAddress] = useState(false);
-  const { user } = useUserStore();
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
   const { data: addressResponse, isPending, isError } = useGetAddress();
 
-  const handleAddressPopup = () => setShowAddAddress(true);
+  const { user } = useUserStore();
+
+  const handleAddNewAddress = () => {
+    setSelectedAddress(null);
+    setShowAddAddress(true);
+  };
+
+  const handleEditAddress = (address) => {
+    setSelectedAddress(address);
+    setShowAddAddress(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowAddAddress(false);
+    setSelectedAddress(null);
+  };
+
   if (!user) {
     return <p className="text-center text-gray-600">Loading profile...</p>;
   }
@@ -36,7 +52,7 @@ const UserProfilePage = () => {
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Saved Addresses</h3>
           <button
-            onClick={handleAddressPopup}
+            onClick={handleAddNewAddress}
             className="bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm"
           >
             + Add Address
@@ -45,9 +61,11 @@ const UserProfilePage = () => {
 
         {/* Add Address Popup */}
         {showAddAddress && (
-          <AddAddressPopup onClose={() => setShowAddAddress(false)} />
+          <AddAddressPopup
+            onClose={handleClosePopup}
+            initialData={selectedAddress} 
+          />
         )}
-
         {/* Address Card (Static Example) */}
         <div className="grid grid-cols-2 gap-4 rounded-lg p-4 bg-gray-200 mb-4 shadow-sm">
           {isPending && <p>Loading...</p>}
@@ -55,7 +73,11 @@ const UserProfilePage = () => {
           {!isPending &&
             !isError &&
             addressResponse.map((address) => (
-              <AddressCard key={address._id} address={address} />
+              <AddressCard
+                key={address._id}
+                address={address}
+                onEdit={handleEditAddress}
+              />
             ))}
         </div>
       </div>

@@ -3,10 +3,12 @@ import React from "react";
 import { PiMapPinLineLight } from "react-icons/pi";
 import { FiEdit, FiTrash2, FiStar } from "react-icons/fi";
 import { useSetDefaultAddress } from "../../hooks/user/useSetDefaultAddress";
-// import { useSetDefaultAddress } from "../../hooks/user/useSetDefaultAddress";
+import { useDeleteAddress } from "../../hooks/user/useDeleteAddress";
 
-const AddressCard = ({ address }) => {
-  const { mutate: setDefault,isPending } = useSetDefaultAddress();
+
+const AddressCard = ({ address,onEdit }) => {
+  const { mutate: setDefault } = useSetDefaultAddress();
+  const {mutate: deleteAddress } = useDeleteAddress()
 
   return (
     <div className="relative bg-white border border-gray-200 rounded-xl p-5 shadow-md transition hover:shadow-lg">
@@ -44,11 +46,13 @@ const AddressCard = ({ address }) => {
             <span className="hidden sm:inline">Set as Default</span>
           </button>
         )}
-        <button className="flex items-center gap-1 hover:text-yellow-500 transition">
+
+        <button onClick={()=>onEdit(address)} className="flex items-center gap-1 hover:text-yellow-500 transition">
           <FiEdit className="text-base" />
           <span className="hidden sm:inline">Edit</span>
         </button>
-        <button className="flex items-center gap-1 hover:text-red-500 transition">
+
+        <button onClick={()=>deleteAddress(address._id)} className="flex items-center gap-1 hover:text-red-500 transition">
           <FiTrash2 className="text-base" />
           <span className="hidden sm:inline">Delete</span>
         </button>

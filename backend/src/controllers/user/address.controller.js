@@ -62,7 +62,7 @@ export const updateAddress = asyncHandler(async (req, res) => {
   const { street, city, state, postalCode, country, label, isDefault } =
     req.body;
 
-  const user = User.findById(userId);
+  const user = await User.findById(userId);
 
   if (!user) {
     throw new ApiError(404, "user not found");
@@ -96,24 +96,39 @@ export const deleteAddress = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const { addressId } = req.params;
 
+  // Step 1: Confirm user exists
   const user = await User.findById(userId);
-
   if (!user) {
-    throw new ApiError(404, "user not found");
+    throw new ApiError(404, "User not found");
   }
 
-  const address = user.addresses.id(addressId);
-
-  if (!address) {
+  // Step 2: Check if address with addressId exists
+  const addressExists = user.addresses.some(
+    (addr) => addr._id.toString() === addressId
+  );
+  if (!addressExists) {
     throw new ApiError(404, "Address not found");
   }
 
-  address.remove();
-  await user.save();
+  // Step 3: Remove the address using $pull
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    {
+      $pull: {
+        addresses: { _id: addressId },
+      },
+    },
+    { new: true } // returns the updated document
+  );
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, user.addresses, "Address deleted successfully"));
+  // Step 4: Send response
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      updatedUser.addresses,
+      "Address deleted successfully"
+    )
+  );
 });
 
 export const setDefaultAddress = asyncHandler(async (req, res) => {
