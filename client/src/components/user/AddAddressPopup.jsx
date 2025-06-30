@@ -5,10 +5,12 @@ import { toast } from "react-hot-toast";
 import useUserStore from "../../store/userStore";
 import { useAddAddress } from "../../hooks/user/useAddAddress";
 import { useUpdateAddress } from "../../hooks/user/useUpdateAddress";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AddAddressPopup = ({ onClose, initialData = null }) => {
   const isEditMode = !!initialData;
   const { user } = useUserStore();
+   const queryClient = useQueryClient();
 
   const [formData, setFormData] = useState({
     street: "",
@@ -53,6 +55,7 @@ const AddAddressPopup = ({ onClose, initialData = null }) => {
     mutationFn(payload, {
       onSuccess: () => {
         toast.success(isEditMode ? "Address updated!" : "Address added!");
+        queryClient.invalidateQueries({ queryKey: ["user-addresses"] })
         onClose();
       },
       onError: () => {

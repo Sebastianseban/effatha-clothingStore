@@ -21,8 +21,8 @@ const UserProfilePopup = ({ onClose }) => {
 
       <ul className="space-y-2 text-sm">
         <li>
-          <Link to="/account">
-            <button className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 transition-colors">
+          <Link  to="/account">
+            <button   onClick={onClose} className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 transition-colors">
               View Profile
             </button>
           </Link>

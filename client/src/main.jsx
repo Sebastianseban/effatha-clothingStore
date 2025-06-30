@@ -21,7 +21,7 @@ import { Toaster } from "react-hot-toast";
 
 const queryClient = new QueryClient();
 
-// You should store this in an .env file
+
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const router = createBrowserRouter([

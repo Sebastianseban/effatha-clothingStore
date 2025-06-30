@@ -84,7 +84,7 @@ const NavBar = () => {
         ) : (
           <>
             <Link to="/login">
-              <h1 className="cursor-pointer text-[15px] sm:text-[20px] font-light">
+              <h1 className="cursor-pointer text-[12px] sm:text-[20px] font-light">
                 Login
               </h1>
             </Link>
