@@ -38,7 +38,9 @@ Effatha is a modern full-stack e-commerce web application built with the **MERN 
 ---
 
 ## 📁 Project Structure
-
+effatha/
+├── client/ # Frontend (React + Vite + Tailwind)
+└── server/ # Backend (Node + Express + MongoDB)
 
 ---
 
