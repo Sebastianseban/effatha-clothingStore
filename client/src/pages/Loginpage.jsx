@@ -134,7 +134,7 @@ const LoginPage = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-white text-black w-full h-16 rounded-2xl mt-4 text-lg font-medium"
+            className="bg-white text-black w-full p-3 sm:p-0 sm:h-16 rounded-2xl mt-4 text-lg font-medium"
           >
             {isLoading ? "Logging in..." : "Login"}
           </button>

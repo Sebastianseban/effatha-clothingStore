@@ -4,11 +4,23 @@ import ProductCard from "../ProductCard";
 import { FaAngleLeft } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
 import { useHighlights } from "../../hooks/user/useHighlights";
+import ProductCardShimmer from "../ProductCardShimmer";
 
 const Section2 = ({ title, viewAllLink, type }) => {
   const { data: products, isLoading, isError } = useHighlights(type);
 
-  if (isLoading) return <div className="px-16 py-8">Loading...</div>;
+  // if (isLoading) return <div className="px-16 py-8">Loading...</div>;
+    if (isLoading) {
+    return (
+      <div className="flex gap-4 px-6 sm:px-10 md:px-16 py-8 overflow-x-auto">
+        {Array(4)
+          .fill(0)
+          .map((_, index) => (
+            <ProductCardShimmer key={index} />
+          ))}
+      </div>
+    );
+  }
   if (isError) return <div className="px-16 py-8">Failed to load products</div>;
 
   return (
