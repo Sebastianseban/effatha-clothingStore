@@ -23,6 +23,7 @@ import userRouter from "./routes/user.routes.js"
 import adminRouter from "./routes/admin.routes.js"
 import productRouter from "./routes/product.routes.js"
 import addressRoutes from "./routes/addresses.route.js";
+import cartRoutes from "./routes/cart.routes.js"
 
 
 
@@ -30,5 +31,6 @@ app.use("/api/v1/users",userRouter)
 app.use("/api/v1/admin",adminRouter)
 app.use("/api/v1/product",productRouter)
 app.use("/api/v1/users/addresses", addressRoutes);
+app.use("/api/v1/cart", cartRoutes);
 
 export { app }
