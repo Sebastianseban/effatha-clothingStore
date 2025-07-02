@@ -1,4 +1,4 @@
-import { Cart } from "../../models/cart.model.js"
+import { Cart } from "../../models/cart.model.js";
 import { Product } from "../../models/product.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
@@ -64,4 +64,74 @@ export const addToCart = asyncHandler(async (req, res) => {
         existingItem ? "Quantity updated in cart" : "Item added to cart"
       )
     );
+});
+
+export const getUserCart = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const cart = await Cart.findOne({ user: userId })
+    .populate("items.product", "title brand price variants")
+    .exec();
+
+  if (!cart || cart.items.length === 0) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { items: [] }, "Cart is empty"));
+  }
+
+  const formattedItems = cart.items.map((item) => {
+    const variant = item.product.variants.find((v) => v.color === item.color);
+
+    return {
+      _id: item._id,
+      productId: item.product._id,
+      title: item.product.title,
+      brand: item.product.brand,
+      price: item.product.price,
+      size: item.size,
+      color: item.color,
+      quantity: item.quantity,
+      image: variant?.images?.[0] || null,
+    };
+  });
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, formattedItems, "User cart fetched successfully")
+    );
+});
+
+export const removeFromCart = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  const { itemId } = req.params;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  const cart = await Cart.findOne({ user: userId });
+
+  if (!cart || !cart.items?.length) {
+    throw new ApiError(404, "Cart is empty or not found");
+  }
+
+  const itemIndex = cart.items.findIndex(
+    (item) => item?._id?.toString() === itemId?.trim()
+  );
+
+  if (itemIndex === -1) {
+    throw new ApiError(404, "Item not found in cart");
+  }
+
+  cart.items.splice(itemIndex, 1);
+  await cart.save();
+
+  return res.status(200).json(
+    new ApiResponse(200, cart.items, "Item removed from cart")
+  );
 });
