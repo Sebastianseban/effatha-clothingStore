@@ -1,15 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ProductCard from "../ProductCard";
 import { FaAngleLeft } from "react-icons/fa";
 import { FaAngleRight } from "react-icons/fa6";
 import { useHighlights } from "../../hooks/user/useHighlights";
 import ProductCardShimmer from "../ProductCardShimmer";
+import AddtoCartPopup from "../user/AddtoCartPopup";
+
 
 const Section2 = ({ title, viewAllLink, type }) => {
   const { data: products, isLoading, isError } = useHighlights(type);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null)
 
-  // if (isLoading) return <div className="px-16 py-8">Loading...</div>;
+
+  const handleAddToCartClick = (product) => {
+    setSelectedProduct(product)
+    setShowPopup(true)
+  }
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setSelectedProduct(null);
+  };
+
+  
     if (isLoading) {
     return (
       <div className="flex gap-4 px-6 sm:px-10 md:px-16 py-8 overflow-x-auto">
@@ -43,18 +58,25 @@ const Section2 = ({ title, viewAllLink, type }) => {
 
         <div className="flex gap-4 sm:gap-6 overflow-x-auto overflow-y-hidden pb-3 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
           {products.map((product) => (
-            <Link key={product._id} to={`/product/${product.slug}`}>
+           
               <ProductCard
                 image={product.image}
                 title={product.title}
                 brand={product.brand}
                 color={product.color}
                 price={product.price}
+                onAddToCartClick={()=> handleAddToCartClick(product)}
+                slug={product.slug}
               />
-            </Link>
+            
           ))}
+        
         </div>
       </div>
+
+       {showPopup && selectedProduct && (
+        <AddtoCartPopup product={selectedProduct} onClose={handleClosePopup} />
+      )}
     </div>
   );
 };
