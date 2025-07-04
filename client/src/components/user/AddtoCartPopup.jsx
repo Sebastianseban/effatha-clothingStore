@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FiX } from "react-icons/fi";
 import { useProduct } from "../../hooks/user/useProduct";
 import { useAddToCart } from "../../hooks/user/useAddToCart";
-import toast from "react-hot-toast";
+
 
 
 const AddtoCartPopup = ({ slug, onClose }) => {
@@ -52,7 +52,7 @@ const AddtoCartPopup = ({ slug, onClose }) => {
   const sizes = selectedVariant?.sizes || [];
 
   return (
-    <div className="fixed inset-0 z-50  bg-opacity-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50  bg-[#11111160] backdrop-blur-xs  bg-opacity-50 flex items-center justify-center">
       <div className="relative bg-white w-[90%] sm:w-[700px] flex flex-col sm:flex-row p-6 shadow-lg rounded-lg overflow-hidden">
         {/* Close Button */}
         <button
@@ -126,7 +126,7 @@ const AddtoCartPopup = ({ slug, onClose }) => {
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
             >
-              Add to cart
+             {isPending ? "Adding to cart..." : "Add to cart"}
             </button>
           </div>
         </div>
