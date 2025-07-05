@@ -20,7 +20,7 @@ const NavBar = () => {
   const toggleSideBar = () => setIsSideBarOpen(!isSideBarOpen);
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
 
-  // const user = false; // Assume user is not logged in
+
 
   const { isAuth, user } = useUserStore();
   console.log(user + "user info");
