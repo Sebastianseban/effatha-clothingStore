@@ -135,3 +135,39 @@ export const removeFromCart = asyncHandler(async (req, res) => {
     new ApiResponse(200, cart.items, "Item removed from cart")
   );
 });
+ 
+export const updateCartItemQuantity = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
+  const { itemId } = req.params;
+  const { action } = req.body;
+
+  if (!userId) {
+    throw new ApiError(401, "Unauthorized");
+  }
+
+  if (!itemId || !["increment", "decrement"].includes(action)) {
+    throw new ApiError(400, "Invalid request data");
+  }
+
+  const cart = await Cart.findOne({ user: userId });
+  if (!cart) {
+    throw new ApiError(404, "Cart not found");
+  }
+
+  const item = cart.items.find((item) => item._id.toString() === itemId);
+  if (!item) {
+    throw new ApiError(404, "Item not found in cart");
+  }
+
+  if (action === "increment") {
+    item.quantity += 1;
+  } else if (action === "decrement" && item.quantity > 1) {
+    item.quantity -= 1;
+  }
+
+  await cart.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, cart.items, "Cart item quantity updated"));
+});
