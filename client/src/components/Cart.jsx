@@ -3,10 +3,12 @@ import React, { useEffect } from "react";
 import { FiX, FiTrash2 } from "react-icons/fi";
 import { useCart } from "../hooks/user/useCart";
 import { useDeleteCartItem } from "../hooks/user/useDeleteCartItem";
+import { useUpdateCartItemQuantity } from "../hooks/user/useUpdateCartItemQuantity";
 
 const Cart = ({ onClose }) => {
   const { data: cartItems = [], isLoading } = useCart();
   const {mutate:deleteItem} = useDeleteCartItem()
+  const { mutate: updateQuantity } = useUpdateCartItemQuantity();
 
   useEffect(() => {
     document.body.classList.add("overflow-hidden");
@@ -19,12 +21,12 @@ const Cart = ({ onClose }) => {
   );
 
   const handleIncrement = (itemId) => {
-    // 🔜 Future: Call updateCartQty({ itemId, quantity: quantity + 1 })
+     updateQuantity({itemId,action:"increment"})
     console.log("Increase quantity of", itemId);
   };
 
   const handleDecrement = (itemId) => {
-    // 🔜 Future: Call updateCartQty({ itemId, quantity: quantity - 1 })
+ updateQuantity({itemId,action:"decrement"})
     console.log("Decrease quantity of", itemId);
   };
 
