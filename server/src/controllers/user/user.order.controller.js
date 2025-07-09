@@ -55,5 +55,5 @@ export const placeOrder = asyncHandler(async (req, res) => {
 
   return res.status(201).json(
     new ApiResponse(201, order, "Order placed successfully")
-  );
+  )l;
 });
