@@ -4,7 +4,7 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import { Cart } from "../../models/cart.model.js";
 import { User } from "../../models/user.model.js";
 import { Order } from "../../models/order.model.js";
-import { convertCartToOrderItems } from "../../helpers/order.helper.js";
+import { convertCartToOrderItems } from "../../utils/order.utils.js"
 
 export const placeOrder = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
@@ -14,14 +14,22 @@ export const placeOrder = asyncHandler(async (req, res) => {
     throw new ApiError(401, "Unauthorized");
   }
 
-  // Fetch cart
+  
   const cart = await Cart.findOne({ user: userId }).populate("items.product");
   if (!cart || cart.items.length === 0) {
     throw new ApiError(400, "Your cart is empty.");
   }
 
-  // Fetch user and validate selected address
+
   const user = await User.findById(userId);
+  if (!user) {
+    throw new ApiError(404, "User not found.");
+  }
+
+  if (!user.addresses || user.addresses.length === 0) {
+    throw new ApiError(400, "No addresses found for this user.");
+  }
+
   const selectedAddress = user.addresses.find(
     (address) => address._id.toString() === addressId
   );
@@ -30,16 +38,15 @@ export const placeOrder = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Selected address not found.");
   }
 
-  // Convert cart items to order items
+  
   const orderItems = convertCartToOrderItems(cart);
 
-  // Calculate subtotal
-  const subtotal = orderItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
+  const subtotal = orderItems.reduce((acc, item) => {
+    const itemTotal = item.price && item.quantity ? item.price * item.quantity : 0;
+    return acc + itemTotal;
+  }, 0);
 
-  // Create Order
+  
   const order = await Order.create({
     user: userId,
     orderItems,
@@ -50,10 +57,10 @@ export const placeOrder = asyncHandler(async (req, res) => {
     status: "pending",
   });
 
-  // Clear cart after placing order
+ 
   await Cart.findOneAndDelete({ user: userId });
 
   return res.status(201).json(
     new ApiResponse(201, order, "Order placed successfully")
-  )l;
+  );
 });

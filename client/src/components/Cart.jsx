@@ -6,7 +6,10 @@ import { useDeleteCartItem } from "../hooks/user/useDeleteCartItem";
 import { useUpdateCartItemQuantity } from "../hooks/user/useUpdateCartItemQuantity";
 
 const Cart = ({ onClose }) => {
-  const { data: cartItems = [], isLoading } = useCart();
+
+  const { data, isLoading } = useCart();
+const cartItems = Array.isArray(data) ? data : [];
+
   const {mutate:deleteItem} = useDeleteCartItem()
   const { mutate: updateQuantity } = useUpdateCartItemQuantity();
 
