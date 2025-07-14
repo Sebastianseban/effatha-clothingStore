@@ -1,8 +1,7 @@
 import React from "react";
 import Section1 from "../components/HomePage/Section1";
-import NavBar from "../components/NavBar";
+
 import Section2 from "../components/HomePage/Section2";
-import SideBar from "../components/SideBar";
 
 const HomePage = () => {
   return (
@@ -14,6 +13,7 @@ const HomePage = () => {
           viewAllLink="/collections/newArrivals"
           type="new_arrival"
         />
+
         <Section2 title="BEST SELLER" type="best_seller" />
       </div>
     </div>
