@@ -5,7 +5,7 @@ import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useUserStore from "./store/userStore";
 import axiosInstance from "./api/axiosInstance";
-import AddtoCartPopup from "./components/user/AddtoCartPopup";
+
 
 function App() {
   const setUser = useUserStore((state) => state.setUser);

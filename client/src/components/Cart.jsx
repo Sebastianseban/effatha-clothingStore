@@ -1,9 +1,10 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FiX, FiTrash2 } from "react-icons/fi";
 import { useCart } from "../hooks/user/useCart";
 import { useDeleteCartItem } from "../hooks/user/useDeleteCartItem";
 import { useUpdateCartItemQuantity } from "../hooks/user/useUpdateCartItemQuantity";
+import ConfirmCheckoutPopup from "./user/ConfirmCheckoutPopup ";
 
 const Cart = ({ onClose }) => {
 
@@ -12,6 +13,8 @@ const cartItems = Array.isArray(data) ? data : [];
 
   const {mutate:deleteItem} = useDeleteCartItem()
   const { mutate: updateQuantity } = useUpdateCartItemQuantity();
+
+  const [showCheckoutPopup,setShowCheckoutPopup] = useState(false)
 
   useEffect(() => {
     document.body.classList.add("overflow-hidden");
@@ -114,11 +117,20 @@ const cartItems = Array.isArray(data) ? data : [];
             <span className="font-medium text-gray-800">Subtotal</span>
             <span className="font-bold text-gray-900">₹{subtotal}</span>
           </div>
-          <button className="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition">
+          <button onClick={()=>setShowCheckoutPopup(true)} className="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition">
             Checkout
           </button>
         </div>
       </div>
+      {
+        showCheckoutPopup && (
+          <ConfirmCheckoutPopup
+          onClose={()=>setShowCheckoutPopup(false)}
+          cartItems={cartItems}
+          subtotal={subtotal}
+          />
+        )
+      }
     </div>
   );
 };
