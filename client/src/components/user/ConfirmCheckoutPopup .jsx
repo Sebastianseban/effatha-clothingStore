@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { FiChevronDown, FiChevronUp } from "react-icons/fi";
 import { PiMapPinLineLight } from "react-icons/pi";
+import toast from "react-hot-toast";
 
 import AddressCard from "../../components/user/AddressCard";
 import AddAddressPopup from "../../components/user/AddAddressPopup";
@@ -20,6 +22,18 @@ const ConfirmCheckoutPopup = ({ onClose, cartItems = [], subtotal = 0 }) => {
   const { user } = useUserStore();
   const { data: addresses = [], isPending, isError } = useGetAddress();
 
+  console.log("cart",cartItems)
+
+  // Automatically select default address on load
+  useEffect(() => {
+    if (addresses.length > 0 && !selectedAddressId) {
+      const defaultAddress = addresses.find((addr) => addr.isDefault);
+      if (defaultAddress) {
+        setSelectedAddressId(defaultAddress._id);
+      }
+    }
+  }, [addresses, selectedAddressId]);
+
   const handleEditAddress = (address) => {
     setSelectedAddress(address);
     setShowAddAddress(true);
@@ -35,17 +49,26 @@ const ConfirmCheckoutPopup = ({ onClose, cartItems = [], subtotal = 0 }) => {
   };
 
   const handleProceedToCheckout = () => {
-    const selected =
-      addresses.find((addr) => addr._id === selectedAddressId) || addresses[0];
-    if (!selected) return;
+    // ✅ Select address either from selectedAddressId or default
+    let selected = addresses.find((addr) => addr._id === selectedAddressId);
+
+    if (!selected) {
+      selected = addresses.find((addr) => addr.isDefault);
+    }
+
+    if (!selected) {
+      toast.error("Please select a delivery address.");
+      return;
+    }
 
     navigate("/checkout", {
       state: {
         cartItems,
         subtotal,
-        addressId: selected._id,
+        address: selected,
       },
     });
+
     onClose();
   };
 
@@ -61,14 +84,14 @@ const ConfirmCheckoutPopup = ({ onClose, cartItems = [], subtotal = 0 }) => {
             />
           </button>
           <h1 className="font-semibold tracking-widest text-sm text-gray-800">
-            SUPERKICKS
+            EFFATHA
           </h1>
           <div className="w-5 h-5 rounded-full bg-gray-300" />
         </div>
 
-        {/* Scrollable Body */}
+        {/* Body */}
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
-          {/* Order Summary Accordion */}
+          {/* Order Summary Toggle */}
           <div
             onClick={() => setShowOrderSummary(!showOrderSummary)}
             className="bg-gray-50 rounded-xl px-5 py-4 flex items-center justify-between border border-gray-200 hover:shadow-sm cursor-pointer transition"
@@ -91,12 +114,8 @@ const ConfirmCheckoutPopup = ({ onClose, cartItems = [], subtotal = 0 }) => {
             <div className="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 space-y-2">
               {cartItems.map((item) => (
                 <div key={item._id} className="flex justify-between">
-                  <span>
-                    {item.title} × {item.quantity}
-                  </span>
-                  <span className="font-medium">
-                    ₹{item.price * item.quantity}
-                  </span>
+                  <span>{item.title} × {item.quantity}</span>
+                  <span className="font-medium">₹{item.price * item.quantity}</span>
                 </div>
               ))}
               <div className="flex justify-between font-semibold border-t pt-2 mt-2">
@@ -141,7 +160,7 @@ const ConfirmCheckoutPopup = ({ onClose, cartItems = [], subtotal = 0 }) => {
                     <AddressCard
                       address={address}
                       onEdit={handleEditAddress}
-                      userName={`${user.firstName}`}
+                      userName={user.firstName}
                       phoneNumber={user.mobileNumber}
                     />
                   </div>
@@ -159,7 +178,9 @@ const ConfirmCheckoutPopup = ({ onClose, cartItems = [], subtotal = 0 }) => {
           >
             Proceed To Payment
           </button>
-         
+             <p className="text-xs text-center text-gray-400 mt-2">
+            🔒 Secure Payment via Razorpay
+          </p>
         </div>
 
         {/* Add/Edit Address Popup */}
