@@ -7,7 +7,7 @@ const router = Router()
 
 router.use(verifyJWT)
 
-router.route("/").get(placeOrder)
+router.post("/", placeOrder);
 router.post("/verify-razorpay", verifyRazorpayPayment);
 
 export default router;  
