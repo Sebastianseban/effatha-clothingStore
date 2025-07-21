@@ -19,6 +19,7 @@ import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import UserProfilePage from "./pages/user/userProfilePage.jsx";
 import { Toaster } from "react-hot-toast";
 import CheckoutPage from "./pages/user/CheckoutPage.jsx";
+import OrderSuccessPage from "./pages/user/OrderSuccessPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const router = createBrowserRouter([
       { path: "product/:slug", element: <ProductPage /> },
       { path: "account", element: <UserProfilePage /> },
       { path: "checkout", element: <CheckoutPage/> },
+      { path: "order-success", element: <OrderSuccessPage/> },
     ],
   },
 

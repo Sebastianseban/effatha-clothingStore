@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { FiX, FiTrash2 } from "react-icons/fi";
 import { useCart } from "../hooks/user/useCart";
@@ -7,14 +6,13 @@ import { useUpdateCartItemQuantity } from "../hooks/user/useUpdateCartItemQuanti
 import ConfirmCheckoutPopup from "./user/ConfirmCheckoutPopup ";
 
 const Cart = ({ onClose }) => {
-
   const { data, isLoading } = useCart();
-const cartItems = Array.isArray(data) ? data : [];
+  const cartItems = Array.isArray(data) ? data : [];
 
-  const {mutate:deleteItem} = useDeleteCartItem()
+  const { mutate: deleteItem } = useDeleteCartItem();
   const { mutate: updateQuantity } = useUpdateCartItemQuantity();
 
-  const [showCheckoutPopup,setShowCheckoutPopup] = useState(false)
+  const [showCheckoutPopup, setShowCheckoutPopup] = useState(false);
 
   useEffect(() => {
     document.body.classList.add("overflow-hidden");
@@ -27,26 +25,27 @@ const cartItems = Array.isArray(data) ? data : [];
   );
 
   const handleIncrement = (itemId) => {
-     updateQuantity({itemId,action:"increment"})
+    updateQuantity({ itemId, action: "increment" });
     console.log("Increase quantity of", itemId);
   };
 
   const handleDecrement = (itemId) => {
- updateQuantity({itemId,action:"decrement"})
+    updateQuantity({ itemId, action: "decrement" });
     console.log("Decrease quantity of", itemId);
   };
 
   const handleDelete = (itemId) => {
-    deleteItem(itemId)
+    deleteItem(itemId);
   };
 
   return (
     <div className="fixed inset-0 z-50 bg-[#11111143] backdrop-blur-sm flex justify-end">
       <div className="w-[90%] sm:w-[440px] bg-white h-full flex flex-col shadow-2xl rounded-l-xl overflow-hidden animate-slide-in-right">
-
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-5 border-b border-gray-200">
-          <h2 className="text-lg font-bold text-gray-800 tracking-wide">Your Cart 🛒</h2>
+          <h2 className="text-lg font-bold text-gray-800 tracking-wide">
+            Your Cart 🛒
+          </h2>
           <button
             onClick={onClose}
             className="text-2xl text-gray-400 hover:text-black transition"
@@ -73,9 +72,13 @@ const cartItems = Array.isArray(data) ? data : [];
                   className="w-16 h-16 object-cover rounded-md bg-gray-100"
                 />
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-gray-900">{item.title}</h3>
+                  <h3 className="text-sm font-semibold text-gray-900">
+                    {item.title}
+                  </h3>
                   <p className="text-xs text-gray-500">{item.brand}</p>
-                  <p className="text-xs text-gray-500">Color: {item.color} | Size: {item.size}</p>
+                  <p className="text-xs text-gray-500">
+                    Color: {item.color} | Size: {item.size}
+                  </p>
 
                   <div className="flex items-center mt-2 gap-2">
                     <button
@@ -117,20 +120,27 @@ const cartItems = Array.isArray(data) ? data : [];
             <span className="font-medium text-gray-800">Subtotal</span>
             <span className="font-bold text-gray-900">₹{subtotal}</span>
           </div>
-          <button onClick={()=>setShowCheckoutPopup(true)} className="w-full bg-black text-white py-3 rounded-md font-semibold hover:bg-gray-800 transition">
+          <button
+            onClick={() => setShowCheckoutPopup(true)}
+            disabled={cartItems.length === 0}
+            className={`w-full py-3 rounded-md font-semibold transition ${
+              cartItems.length === 0
+                ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                : "bg-black text-white hover:bg-gray-800"
+            }`}
+          >
             Checkout
           </button>
         </div>
       </div>
-      {
-        showCheckoutPopup && (
-          <ConfirmCheckoutPopup
-          onClose={()=>setShowCheckoutPopup(false)}
+      {showCheckoutPopup && (
+        <ConfirmCheckoutPopup
+          onClose={() => setShowCheckoutPopup(false)}
+          onCloseCart={onClose}
           cartItems={cartItems}
           subtotal={subtotal}
-          />
-        )
-      }
+        />
+      )}
     </div>
   );
 };

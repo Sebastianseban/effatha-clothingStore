@@ -11,7 +11,7 @@ import AddAddressPopup from "../../components/user/AddAddressPopup";
 import useUserStore from "../../store/userStore";
 import { useGetAddress } from "../../hooks/user/useGetAddress";
 
-const ConfirmCheckoutPopup = ({ onClose, cartItems = [], subtotal = 0 }) => {
+const ConfirmCheckoutPopup = ({ onClose,onCloseCart, cartItems = [], subtotal = 0 }) => {
   const navigate = useNavigate();
 
   const [showOrderSummary, setShowOrderSummary] = useState(false);
@@ -60,7 +60,7 @@ const ConfirmCheckoutPopup = ({ onClose, cartItems = [], subtotal = 0 }) => {
       toast.error("Please select a delivery address.");
       return;
     }
-
+    if (onCloseCart) onCloseCart();
     navigate("/checkout", {
       state: {
         cartItems,
