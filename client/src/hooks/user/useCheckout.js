@@ -2,8 +2,10 @@ import { toast } from "react-hot-toast";
 import { usePlaceOrder } from "./usePlaceOrder";
 import { useVerifyRazorpayPayment } from "./useVerifyRazorpayPayment";
 import { launchRazorpay } from "../../utils/razorpay";
+import { useNavigate } from "react-router-dom";
 
 export const useCheckout = (user, address) => {
+   const navigate = useNavigate();
   const placeOrder = usePlaceOrder();
   const verifyPayment = useVerifyRazorpayPayment();
 
@@ -35,7 +37,8 @@ export const useCheckout = (user, address) => {
               });
 
               toast.success("✅ Payment successful!");
-              // optionally navigate to success page
+               navigate("/order-success");
+            
             } catch {
               toast.error("❌ Payment verification failed. Please try again.");
             }
@@ -43,7 +46,7 @@ export const useCheckout = (user, address) => {
         });
       } else {
         toast.success("✅ COD order placed successfully!");
-        // optionally navigate to success page
+        navigate("/order-success");
       }
     } catch (err) {
       console.error(err);
