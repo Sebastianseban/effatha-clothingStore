@@ -8,6 +8,7 @@ import { Order } from "../../models/order.model.js";
 import { convertCartToOrderItems } from "../../utils/order.utils.js";
 import { razorpay } from "../../utils/razorpayInstance.js";
 
+
 export const placeOrder = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
   const { addressId, paymentMethod = "cod" } = req.body;
@@ -16,25 +17,25 @@ export const placeOrder = asyncHandler(async (req, res) => {
 
   const cart = await Cart.findOne({ user: userId }).populate("items.product");
   if (!cart || cart.items.length === 0)
-    throw new ApiError(400, "Your cart is empty.");
+    throw new ApiError(400, "Your cart is empty");
 
   const user = await User.findById(userId);
-  if (!user) throw new ApiError(404, "User not found.");
+  if (!user) throw new ApiError(404, "User not found");
 
   const selectedAddress = user.addresses.find(
     (addr) => addr._id.toString() === addressId
   );
-  if (!selectedAddress) throw new ApiError(404, "Selected address not found.");
+  if (!selectedAddress) throw new ApiError(404, "Selected address not found");
 
-  const orderItems = convertCartToOrderItems(cart);
-  const subtotal = orderItems.reduce(
+  const items = convertCartToOrderItems(cart);
+  const subtotal = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
 
   if (paymentMethod === "razorpay") {
     const razorpayOrder = await razorpay.orders.create({
-      amount: subtotal * 100, // paise
+      amount: subtotal * 100, // amount in paise
       currency: "INR",
       receipt: `receipt_${Date.now()}`,
       notes: {
@@ -55,15 +56,15 @@ export const placeOrder = asyncHandler(async (req, res) => {
     );
   }
 
-  // COD flow
+  // === COD Order Creation ===
   const order = await Order.create({
     user: userId,
-    orderItems,
+    items,
     shippingAddress: selectedAddress,
     paymentMethod: "cod",
     paymentStatus: "pending",
+    orderStatus: "processing",
     totalAmount: subtotal,
-    status: "pending",
   });
 
   await Cart.findOneAndDelete({ user: userId });
@@ -72,6 +73,7 @@ export const placeOrder = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, order, "Order placed successfully"));
 });
+
 
 export const verifyRazorpayPayment = asyncHandler(async (req, res) => {
   const {
@@ -89,37 +91,40 @@ export const verifyRazorpayPayment = asyncHandler(async (req, res) => {
     .digest("hex");
 
   if (expectedSignature !== razorpay_signature) {
-    throw new ApiError(400, "Invalid payment signature");
+    throw new ApiError(400, "Invalid Razorpay signature");
   }
 
   const user = await User.findById(userId);
-  const selectedAddress = user?.addresses?.find(
+  if (!user) throw new ApiError(404, "User not found");
+
+  const selectedAddress = user.addresses.find(
     (addr) => addr._id.toString() === addressId
   );
+  if (!selectedAddress)
+    throw new ApiError(404, "Selected address not found");
+
   const cart = await Cart.findOne({ user: userId }).populate("items.product");
+  if (!cart || cart.items.length === 0)
+    throw new ApiError(400, "Your cart is empty");
 
-  if (!user || !selectedAddress || !cart) {
-    throw new ApiError(400, "Invalid user, address, or cart");
-  }
-
-  const orderItems = convertCartToOrderItems(cart);
-  const subtotal = orderItems.reduce(
+  const items = convertCartToOrderItems(cart);
+  const subtotal = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
 
   const order = await Order.create({
     user: userId,
-    orderItems,
+    items,
     shippingAddress: selectedAddress,
     paymentMethod: "razorpay",
     paymentStatus: "paid",
+    orderStatus: "processing",
     paymentDetails: {
       razorpay_order_id,
       razorpay_payment_id,
     },
     totalAmount: subtotal,
-    status: "processing",
   });
 
   await Cart.findOneAndDelete({ user: userId });
@@ -129,6 +134,7 @@ export const verifyRazorpayPayment = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, order, "Order placed successfully"));
 });
 
+
 export const getMyOrder = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
@@ -137,13 +143,14 @@ export const getMyOrder = asyncHandler(async (req, res) => {
     .populate("items.product", "title price images");
 
   if (!orders || orders.length === 0) {
-    throw new ApiError(404, "No orders found.");
+    throw new ApiError(404, "No orders found");
   }
 
   return res
     .status(200)
     .json(new ApiResponse(200, orders, "Orders fetched successfully"));
 });
+
 
 export const getOrderById = asyncHandler(async (req, res) => {
   const userId = req.user._id;
