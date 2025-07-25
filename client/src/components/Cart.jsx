@@ -5,6 +5,7 @@ import { useDeleteCartItem } from "../hooks/user/useDeleteCartItem";
 import { useUpdateCartItemQuantity } from "../hooks/user/useUpdateCartItemQuantity";
 import ConfirmCheckoutPopup from "./user/ConfirmCheckoutPopup ";
 
+
 const Cart = ({ onClose }) => {
   const { data, isLoading } = useCart();
   const cartItems = Array.isArray(data) ? data : [];
