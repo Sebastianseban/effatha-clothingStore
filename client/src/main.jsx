@@ -20,6 +20,7 @@ import UserProfilePage from "./pages/user/userProfilePage.jsx";
 import { Toaster } from "react-hot-toast";
 import CheckoutPage from "./pages/user/CheckoutPage.jsx";
 import OrderSuccessPage from "./pages/user/OrderSuccessPage.jsx";
+import OrderHistoryPage from "./pages/user/OrderHistoryPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const router = createBrowserRouter([
       { path: "account", element: <UserProfilePage /> },
       { path: "checkout", element: <CheckoutPage/> },
       { path: "order-success", element: <OrderSuccessPage/> },
+      { path: "order-history", element: <OrderHistoryPage/> },
     ],
   },
 
