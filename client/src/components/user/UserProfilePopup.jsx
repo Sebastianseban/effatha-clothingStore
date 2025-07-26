@@ -28,9 +28,11 @@ const UserProfilePopup = ({ onClose }) => {
           </Link>
         </li>
         <li>
-          <button className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 transition-colors">
+          <Link to="/order-history">
+          <button onClick={onClose} className="w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 transition-colors">
             Order History
           </button>
+          </Link>
         </li>
         <li>
           <button
