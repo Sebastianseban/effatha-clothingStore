@@ -1,6 +1,7 @@
 import React from "react";
 import Lottie from "lottie-react";
 import successOrder from "../../assets/successOrder.json";
+import { Link } from "react-router-dom";
 
 const OrderSuccessPage = () => {
   return (
@@ -19,10 +20,11 @@ const OrderSuccessPage = () => {
         We’ve received your order and will begin processing it soon. You’ll
         receive a shipping confirmation once it's on the way.
       </p>
-
+   <Link to="/">
       <button className="mt-6 inline-block bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition">
         Continue Shopping
       </button>
+      </Link>
     </div>
   );
 };
