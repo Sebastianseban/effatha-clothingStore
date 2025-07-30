@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { MdFavoriteBorder } from "react-icons/md";
 import { FaMinus, FaPlus } from "react-icons/fa6";
@@ -9,8 +8,7 @@ import { useParams } from "react-router-dom";
 import { useProduct } from "../hooks/user/useProduct";
 import ProductImages from "../components/ProductImages";
 import { useAddToCart } from "../hooks/user/useAddToCart";
-import toast from "react-hot-toast";
-
+import toast from "react-hot-toast"; // ✅ toast import
 
 const ProductPage = () => {
   const { slug } = useParams();
@@ -19,16 +17,13 @@ const ProductPage = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [showAbout, setShowAbout] = useState(false);
+  const [isAdding, setIsAdding] = useState(false); // ✅ state to handle loading
 
-  const { mutate: addToCart, isPending } = useAddToCart({
-    onSuccess: () => toast.success("Added to cart ✅"),
-    onError: () => toast.error("Failed to add to cart ❌"),
-  });
+  const { mutate: addToCart } = useAddToCart();
 
   if (isLoading || !product) return <div className="p-10">Loading...</div>;
 
   const variants = product.variants || [];
-  const colors = variants.map((v) => v.color);
   const selectedVariant =
     variants.find((v) => v.color === selectedColor) || variants[0];
   const sizes = selectedVariant?.sizes || [];
@@ -43,6 +38,7 @@ const ProductPage = () => {
       {/* Right Section */}
       <div className="xl:w-2/5 px-10">
         <div>
+          {/* Title */}
           <div className="flex justify-between">
             <p className="text-xl text-gray-900 font-light tracking-widest">
               {product.brand}
@@ -56,6 +52,7 @@ const ProductPage = () => {
             ₹{product.price}
           </h1>
 
+          {/* Color Selector */}
           <p className="text-gray-500 text-xl mt-4">Available Colors</p>
           <div className="flex gap-2 mt-2">
             {variants.map((variant) => (
@@ -77,6 +74,7 @@ const ProductPage = () => {
             ))}
           </div>
 
+          {/* Size Selector */}
           <p className="text-gray-500 text-xl mt-6">Apparel Size</p>
           <div className="flex gap-2 mt-2">
             {sizes.map((sizeObj) => (
@@ -94,25 +92,45 @@ const ProductPage = () => {
             ))}
           </div>
 
+          {/* Add to Cart */}
           <div className="my-5">
             <button
-              className="bg-black hover:bg-gray-700 text-white w-full py-5"
+              className={`bg-black text-white w-full py-5 ${
+                isAdding ? "opacity-60 cursor-not-allowed" : ""
+              }`}
+              disabled={isAdding}
               onClick={() => {
                 if (!selectedColor || !selectedSize) {
-                  toast.warn("Please select both color and size");
+                  toast.error("Please select both color and size.");
                   return;
                 }
 
-                addToCart({
-                  productId: product._id,
-                  color: selectedColor,
-                  size: selectedSize,
-                  quantity: 1,
-                });
+                setIsAdding(true);
+                toast.promise(
+                  new Promise((resolve, reject) => {
+                    addToCart(
+                      {
+                        productId: product._id,
+                        color: selectedColor,
+                        size: selectedSize,
+                        quantity: 1,
+                      },
+                      {
+                        onSuccess: () => resolve(),
+                        onError: () => reject(),
+                        onSettled: () => setIsAdding(false),
+                      }
+                    );
+                  }),
+                  {
+                    loading: "Adding to cart...",
+                    success: "Product added to cart!",
+                    error: "Failed to add to cart.",
+                  }
+                );
               }}
-              disabled={isPending}
             >
-              {isPending ? "Adding to cart..." : "Add to cart"}
+              {isAdding ? "Adding..." : "Add to cart"}
             </button>
           </div>
 
@@ -158,6 +176,7 @@ const ProductPage = () => {
             </div>
           )}
 
+          {/* Service Icons */}
           <div className="flex justify-between items-center border-b border-gray-400 mt-6 pb-4 px-8">
             <div className="flex flex-col items-center">
               <FaShippingFast className="text-4xl" />
