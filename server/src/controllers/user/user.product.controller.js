@@ -56,3 +56,34 @@ export const getProductBySlug = asyncHandler(async (req, res) => {
     new ApiResponse(200, product, "Product found successfully")
   );
 });
+
+export const getNewArrivals = asyncHandler(async (req, res) => {
+  const products = await Product.find()
+    .select("title brand price variants slug createdAt")
+    .sort({ createdAt: -1 });
+
+  const formattedProducts = products.map((product) => {
+    const firstVariant = Array.isArray(product.variants) && product.variants[0] ? product.variants[0] : {};
+    const image = Array.isArray(firstVariant.images) && firstVariant.images.length > 0 ? firstVariant.images[0] : "";
+    const color = firstVariant.color || "-";
+    const stock = Array.isArray(firstVariant.sizes)
+      ? firstVariant.sizes.reduce((acc, size) => acc + (size.quantity || 0), 0)
+      : 0;
+
+    return {
+      _id: product._id,
+      title: product.title,
+      brand: product.brand,
+      price: product.price,
+      slug: product.slug,
+      color,
+      image,
+      stock,
+    };
+  });
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, formattedProducts, "New arrivals fetched"));
+});
+
