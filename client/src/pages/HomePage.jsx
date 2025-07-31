@@ -10,11 +10,11 @@ const HomePage = () => {
       <div className="px-8">
         <Section2
           title="NEW ARRIVAL"
-          viewAllLink="/collections/newArrivals"
+          viewAllLink="/collections/new-arrivals"
           type="new_arrival"
         />
 
-        <Section2 title="BEST SELLER" type="best_seller" />
+        <Section2 title="BEST SELLER" type="best_seller"  viewAllLink="/collections/best-sellers"/>
       </div>
     </div>
   );
