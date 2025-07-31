@@ -21,9 +21,9 @@ import { Toaster } from "react-hot-toast";
 import CheckoutPage from "./pages/user/CheckoutPage.jsx";
 import OrderSuccessPage from "./pages/user/OrderSuccessPage.jsx";
 import OrderHistoryPage from "./pages/user/OrderHistoryPage.jsx";
+import BestSellers from "./pages/user/BestSellers.jsx";
 
 const queryClient = new QueryClient();
-
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -34,7 +34,8 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <HomePage /> },
       { path: "collections", element: <CollectionPage /> },
-      { path: "collections/newArrivals", element: <NewArrivals /> },
+      { path: "collections/new-arrivals", element: <NewArrivals /> },
+      { path: "collections/best-sellers", element: <BestSellers /> },
 
       {
         path: "signup",
@@ -55,9 +56,9 @@ const router = createBrowserRouter([
 
       { path: "product/:slug", element: <ProductPage /> },
       { path: "account", element: <UserProfilePage /> },
-      { path: "checkout", element: <CheckoutPage/> },
-      { path: "order-success", element: <OrderSuccessPage/> },
-      { path: "order-history", element: <OrderHistoryPage/> },
+      { path: "checkout", element: <CheckoutPage /> },
+      { path: "order-success", element: <OrderSuccessPage /> },
+      { path: "order-history", element: <OrderHistoryPage /> },
     ],
   },
 
