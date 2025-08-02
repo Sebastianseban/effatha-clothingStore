@@ -87,3 +87,91 @@ export const getNewArrivals = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, formattedProducts, "New arrivals fetched"));
 });
 
+
+export const getFilteredHighlights = asyncHandler(async (req, res) => {
+  const {
+    type,
+    inStock,
+    minPrice = 0,
+    maxPrice = 999999,
+    sizes,
+    sort,
+  } = req.query;
+
+  // Validate highlight type
+  if (!["new_arrival", "best_seller", "popular"].includes(type)) {
+    throw new ApiError(400, "Invalid highlight type");
+  }
+
+  // Build base query
+  const query = {
+    highLightTypes: type,
+    price: { $gte: Number(minPrice), $lte: Number(maxPrice) },
+  };
+
+  // Fetch products with limited fields
+  const allProducts = await Product.find(query).select(
+    "title brand price variants slug createdAt"
+  );
+
+  // Format each product
+  const formattedProducts = allProducts.map((product) => {
+    const firstVariant = product.variants?.[0] || {};
+    const sizesArray = firstVariant.sizes || [];
+
+    const stock = sizesArray.reduce((sum, size) => sum + (size.quantity || 0), 0);
+
+    return {
+      _id: product._id,
+      title: product.title,
+      brand: product.brand,
+      price: product.price,
+      slug: product.slug,
+      color: firstVariant.color || "-",
+      image: firstVariant.images?.[0] || "",
+      stock,
+      availableSizes: sizesArray.map((s) => s.size).filter(Boolean),
+      createdAt: product.createdAt,
+    };
+  });
+
+  // Apply inStock filter
+  let filtered = formattedProducts;
+  if (inStock === "true") {
+    filtered = filtered.filter((p) => p.stock > 0);
+  } else if (inStock === "false") {
+    filtered = filtered.filter((p) => p.stock <= 0);
+  }
+
+  // Filter by sizes if provided
+  if (sizes) {
+    const sizeArray = sizes.split(",");
+    filtered = filtered.filter((product) =>
+      product.availableSizes.some((s) => sizeArray.includes(s))
+    );
+  }
+
+  // Sort results
+  switch (sort) {
+    case "price_asc":
+      filtered.sort((a, b) => a.price - b.price);
+      break;
+    case "price_desc":
+      filtered.sort((a, b) => b.price - a.price);
+      break;
+    case "newest":
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      break;
+    default:
+      break;
+  }
+
+  // Return response
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      filtered,
+      `Filtered products for ${type} fetched`
+    )
+  );
+});
