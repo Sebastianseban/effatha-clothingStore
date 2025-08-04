@@ -3,7 +3,8 @@ import {
   getHighlightedProducts,
   getNewArrivals,
   getProductBySlug,
-  getFilteredHighlights
+  getFilteredHighlights,
+  getCollections
 } from "../controllers/user/user.product.controller.js";
 
 const router = Router();
@@ -17,7 +18,10 @@ router.route("/highlights/:type").get(getHighlightedProducts);
 
 router.get("/new-arrivals", getNewArrivals);
 
+router.get("/collections", getCollections);
 
 router.route("/:slug").get(getProductBySlug);
+
+
 
 export default router;

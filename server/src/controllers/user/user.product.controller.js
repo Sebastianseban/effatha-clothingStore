@@ -175,3 +175,35 @@ export const getFilteredHighlights = asyncHandler(async (req, res) => {
     )
   );
 });
+
+export const getCollections = asyncHandler(async (req, res) => {
+  const collections = await Product.aggregate([
+    {
+      $group: {
+        _id: "$category",
+        products: {
+          $push: {
+            _id: "$_id",
+            title: "$title",
+            brand: "$brand",
+            price: "$price",
+            slug: "$slug",
+            // Get the first image from the first variant
+            image: { $arrayElemAt: [{ $arrayElemAt: ["$variants.images", 0] }, 0] },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        category: "$_id",
+        products: { $slice: ["$products", 4] }, // Limit to 4 per category
+      },
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, collections, "Collections fetched successfully"));
+});
