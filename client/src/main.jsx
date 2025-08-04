@@ -1,30 +1,31 @@
-import { StrictMode } from "react";
+import { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
-import HomePage from "./pages/HomePage.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import CollectionPage from "./pages/CollectionPage.jsx";
-import NewArrivals from "./pages/NewArrivals.jsx";
-import LoginPage from "./pages/Loginpage.jsx";
-import SignUpPage from "./pages/SignUp.jsx";
-import ProductPage from "./pages/ProductPage.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
-import AdminLayout from "./pages/admin/AdminLayout.jsx";
-import AdminProductsPage from "./pages/admin/AdminProductsPage.jsx";
+import { Toaster } from "react-hot-toast";
 import PublicRoute from "./routes/PublicRoute.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
-import UserProfilePage from "./pages/user/userProfilePage.jsx";
-import { Toaster } from "react-hot-toast";
-import CheckoutPage from "./pages/user/CheckoutPage.jsx";
-import OrderSuccessPage from "./pages/user/OrderSuccessPage.jsx";
-import OrderHistoryPage from "./pages/user/OrderHistoryPage.jsx";
-import BestSellers from "./pages/user/BestSellers.jsx";
+
+// Lazy imports
+const HomePage = lazy(() => import("./pages/HomePage.jsx"));
+const CollectionPage = lazy(() => import("./pages/CollectionPage.jsx"));
+const NewArrivals = lazy(() => import("./pages/NewArrivals.jsx"));
+const LoginPage = lazy(() => import("./pages/Loginpage.jsx"));
+const SignUpPage = lazy(() => import("./pages/SignUp.jsx"));
+const ProductPage = lazy(() => import("./pages/ProductPage.jsx"));
+const UserProfilePage = lazy(() => import("./pages/user/userProfilePage.jsx"));
+const CheckoutPage = lazy(() => import("./pages/user/CheckoutPage.jsx"));
+const OrderSuccessPage = lazy(() => import("./pages/user/OrderSuccessPage.jsx"));
+const OrderHistoryPage = lazy(() => import("./pages/user/OrderHistoryPage.jsx"));
+const BestSellers = lazy(() => import("./pages/user/BestSellers.jsx"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard.jsx"));
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout.jsx"));
+const AdminProductsPage = lazy(() => import("./pages/admin/AdminProductsPage.jsx"));
 
 const queryClient = new QueryClient();
-
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
 const router = createBrowserRouter([
@@ -36,7 +37,6 @@ const router = createBrowserRouter([
       { path: "collections", element: <CollectionPage /> },
       { path: "collections/new-arrivals", element: <NewArrivals /> },
       { path: "collections/best-sellers", element: <BestSellers /> },
-
       {
         path: "signup",
         element: (
@@ -53,7 +53,6 @@ const router = createBrowserRouter([
           </PublicRoute>
         ),
       },
-
       { path: "product/:slug", element: <ProductPage /> },
       { path: "account", element: <UserProfilePage /> },
       { path: "checkout", element: <CheckoutPage /> },
@@ -61,7 +60,6 @@ const router = createBrowserRouter([
       { path: "order-history", element: <OrderHistoryPage /> },
     ],
   },
-
   {
     path: "/admin",
     element: <ProtectedRoute requiredRole="admin" />,
@@ -83,7 +81,9 @@ createRoot(document.getElementById("root")).render(
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
         <Toaster position="top-right" reverseOrder={false} />
-        <RouterProvider router={router} />
+        <Suspense fallback={<div>Loading...</div>}>
+          <RouterProvider router={router} />
+        </Suspense>
       </QueryClientProvider>
     </GoogleOAuthProvider>
   </StrictMode>
