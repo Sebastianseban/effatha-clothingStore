@@ -6,6 +6,7 @@ import ProductCard from "../ProductCard";
 import ProductCardShimmer from "../ProductCardShimmer";
 import AddtoCartPopup from "../user/AddtoCartPopup";
 import { useHighlights } from "../../hooks/user/useHighlights";
+import { cloudinaryOptimize } from "../../utils/cloudinaryOptimize";
 
 const Section2 = ({ title, viewAllLink, type }) => {
   const { data: products, isLoading, isError } = useHighlights(type);
@@ -64,7 +65,7 @@ const Section2 = ({ title, viewAllLink, type }) => {
           {products?.map((product) => (
             <ProductCard
               key={product._id || product.slug}
-              image={product.image}
+              image={cloudinaryOptimize(product.image)}
               title={product.title}
               brand={product.brand}
               color={product.color}
