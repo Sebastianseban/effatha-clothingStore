@@ -14,6 +14,7 @@ const ProductCard = ({
     <Link to={`/product/${slug}`} className="block">
       <div className="bg-gray-50 shadow-md overflow-hidden min-w-[300px] relative">
         <img
+        loading="lazy"
           src={image}
           alt={title}
           className="w-[300px] h-[300px] object-contain hover:scale-105 transition-transform duration-300"
