@@ -207,3 +207,78 @@ export const getCollections = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, collections, "Collections fetched successfully"));
 });
+
+export const getSearchedProducts = asyncHandler(async (req, res) => {
+  const { q, minPrice = 0, maxPrice = 999999, inStock, sizes, sort } = req.query;
+
+  if (!q || q.trim() === "") {
+    throw new ApiError(400, "Search query (q) is required");
+  }
+
+  // Build base search query
+  const searchQuery = {
+    $text: { $search: q },
+    price: { $gte: Number(minPrice), $lte: Number(maxPrice) },
+  };
+
+  const products = await Product.find(searchQuery, {
+    score: { $meta: "textScore" },
+  })
+    .select("title brand price variants slug createdAt")
+    .sort({ score: { $meta: "textScore" } });
+
+  const formatted = products.map((product) => {
+    const firstVariant = product.variants?.[0] || {};
+    const sizesArray = firstVariant.sizes || [];
+
+    const stock = sizesArray.reduce((sum, size) => sum + (size.quantity || 0), 0);
+
+    return {
+      _id: product._id,
+      title: product.title,
+      brand: product.brand,
+      price: product.price,
+      slug: product.slug,
+      color: firstVariant.color || "-",
+      image: firstVariant.images?.[0] || "",
+      stock,
+      availableSizes: sizesArray.map((s) => s.size).filter(Boolean),
+      createdAt: product.createdAt,
+    };
+  });
+
+
+  let filtered = formatted;
+  if (inStock === "true") {
+    filtered = filtered.filter((p) => p.stock > 0);
+  } else if (inStock === "false") {
+    filtered = filtered.filter((p) => p.stock <= 0);
+  }
+
+
+  if (sizes) {
+    const sizeArray = sizes.split(",");
+    filtered = filtered.filter((product) =>
+      product.availableSizes.some((s) => sizeArray.includes(s))
+    );
+  }
+
+
+  switch (sort) {
+    case "price_asc":
+      filtered.sort((a, b) => a.price - b.price);
+      break;
+    case "price_desc":
+      filtered.sort((a, b) => b.price - a.price);
+      break;
+    case "newest":
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      break;
+    default:
+      break;
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, filtered, "Search results fetched successfully"));
+});
