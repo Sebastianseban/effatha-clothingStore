@@ -8,6 +8,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { Toaster } from "react-hot-toast";
 import PublicRoute from "./routes/PublicRoute.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import SearchResultsPage from "./pages/user/SearchResultsPage.jsx";
 
 // Lazy imports
 const HomePage = lazy(() => import("./pages/HomePage.jsx"));
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
       { path: "checkout", element: <CheckoutPage /> },
       { path: "order-success", element: <OrderSuccessPage /> },
       { path: "order-history", element: <OrderHistoryPage /> },
+      { path: "search", element: <SearchResultsPage/>},
     ],
   },
   {
