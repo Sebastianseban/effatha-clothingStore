@@ -1,7 +1,9 @@
 
 import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
 import ProductCard from "../../components/ProductCard";
 import useSearchProducts from "../../hooks/user/useSearchProducts";
+import AddtoCartPopup from "../../components/user/AddtoCartPopup";
 
 const SearchResultsPage = () => {
   const [searchParams] = useSearchParams();
@@ -10,6 +12,21 @@ const SearchResultsPage = () => {
   const { data, isLoading, isError } = useSearchProducts(query);
   const products = data;
 
+  // State for cart popup
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedSlug, setSelectedSlug] = useState(null);
+
+  const handleAddToCartClick = (slug) => {
+    setSelectedSlug(slug);
+    setShowPopup(true);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    setSelectedSlug(null);
+  };
+
+  // Loading UI
   if (isLoading) {
     return (
       <div className="min-h-[400px] flex flex-col justify-center items-center bg-gradient-to-br from-blue-50 to-gray-100 rounded-xl mt-10 mx-4 shadow animate-pulse">
@@ -22,6 +39,7 @@ const SearchResultsPage = () => {
     );
   }
 
+  // Error UI
   if (isError) {
     return (
       <div className="min-h-[400px] flex flex-col justify-center items-center bg-gradient-to-br from-rose-50 to-gray-100 rounded-xl mt-10 mx-4 shadow">
@@ -33,10 +51,10 @@ const SearchResultsPage = () => {
     );
   }
 
+  // No results
   if (!products?.length) {
     return (
       <div className="min-h-[400px] flex flex-col justify-center items-center bg-white rounded-xl mt-10 mx-4 shadow">
-      
         <p className="text-gray-500 text-lg font-light">No products found.</p>
       </div>
     );
@@ -46,37 +64,41 @@ const SearchResultsPage = () => {
     <section className="px-2 sm:px-8 md:px-20 py-10 min-h-[60vh]">
       <div className="mb-8">
         <h2 className="text-[2rem] sm:text-3xl font-black text-gray-900 tracking-tight mb-1">
-          Search results for <span className="text-gary-900 break-all">"{query}"</span>
+          Search results for <span className="text-gray-900 break-all">"{query}"</span>
         </h2>
         <p className="text-gray-400 text-sm">
           {products.length} product{products.length !== 1 && "s"} found
         </p>
       </div>
 
-      <div className="
-        grid gap-7
-        grid-cols-1 
-        sm:grid-cols-2 
-        md:grid-cols-3 
-        xl:grid-cols-4 
-        2xl:grid-cols-5
-      ">
+      <div
+        className="
+          grid gap-7
+          grid-cols-1 
+          sm:grid-cols-2 
+          md:grid-cols-3 
+          xl:grid-cols-4 
+          2xl:grid-cols-5
+        "
+      >
         {products.map((product) => (
           <ProductCard
             key={product._id}
             image={product.image}
-            title={product.name}
+            title={product.title}
             brand={product.brand}
             color={product.color}
             price={product.price}
             slug={product.slug}
-          
-            onAddToCartClick={() => {
-              console.log("Add to cart clicked:", product.name);
-            }}
+            onAddToCartClick={() => handleAddToCartClick(product.slug)}
           />
         ))}
       </div>
+
+      {/* Add to Cart Popup */}
+      {showPopup && selectedSlug && (
+        <AddtoCartPopup slug={selectedSlug} onClose={handleClosePopup} />
+      )}
     </section>
   );
 };

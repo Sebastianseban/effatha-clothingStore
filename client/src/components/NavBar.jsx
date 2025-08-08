@@ -23,7 +23,7 @@ const NavBar = () => {
     <nav className="w-full bg-white shadow-sm sticky top-0 z-40">
       <div className="relative max-w-screen-2xl mx-auto flex items-center justify-between px-4 sm:px-8 md:px-16 py-3">
         {/* LEFT SIDE: Sidebar */}
-        <div className="flex items-center z-20">
+        <div className="flex items-center z-30">
           <button
             type="button"
             onClick={toggleSideBar}
@@ -80,7 +80,7 @@ const NavBar = () => {
               </Link>
             )}
             {showProfile && (
-              <div className="absolute top-12 right-0 z-30">
+              <div className="absolute -top-7 -right-7 z-10">
                 <UserProfilePopup onClose={() => setShowProfile(false)} />
               </div>
             )}

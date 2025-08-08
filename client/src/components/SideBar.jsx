@@ -27,29 +27,29 @@ const SideBar = ({ onClose }) => {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-lg flex justify-start transition-all duration-300 ease-in-out">
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md flex justify-start transition-all duration-300 ease-in-out">
       {/* ===== SIDEBAR PANEL ===== */}
       <div
         className="
           w-[85%] max-w-[350px] h-full
-          bg-gradient-to-br from-white/90 to-blue-50/70
+          bg-white
           flex flex-col justify-between
           shadow-2xl rounded-r-3xl
           animate-slideSidebarIn
-          border-r border-blue-100/50
+          border-l border-gray-300
           sm:w-[350px]
           transition-all duration-300
         "
       >
         {/* Header */}
         <div>
-          <div className="flex items-center justify-between p-6 border-b border-gray-200/70">
-            <h2 className="text-xl font-extrabold tracking-widest text-black/80 select-none drop-shadow-sm">
+          <div className="flex items-center justify-between p-6 border-b border-gray-300">
+            <h2 className="text-xl font-extrabold tracking-widest text-gray-900 select-none">
               MENU
             </h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-900 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition"
+              className="text-gray-600 hover:text-black bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition"
               aria-label="Close sidebar"
             >
               <FiX className="text-2xl" />
@@ -58,24 +58,29 @@ const SideBar = ({ onClose }) => {
 
           {/* Navigation */}
           <nav className="flex flex-col gap-2 px-6 py-8">
-            <NavItem to="/" label="Home"      icon={<FiHome />}  onClick={onClose} />
-            <NavItem to="#" label="All"       icon={<FiGrid />}  onClick={onClose} />
-            <NavItem to="/collections" label="Collections" icon={<FiBox />} onClick={onClose} />
-            <NavItem to="#" label="Bottoms"   icon={<FiTag />}   onClick={onClose} />
-            <NavItem to="#" label="T-Shirt"   icon={<FiTag />}   onClick={onClose} />
+            <NavItem to="/" label="Home" icon={<FiHome />} onClick={onClose} />
+            <NavItem to="#" label="All" icon={<FiGrid />} onClick={onClose} />
+            <NavItem
+              to="/collections"
+              label="Collections"
+              icon={<FiBox />}
+              onClick={onClose}
+            />
+            <NavItem to="#" label="Bottoms" icon={<FiTag />} onClick={onClose} />
+            <NavItem to="#" label="T-Shirt" icon={<FiTag />} onClick={onClose} />
             <NavItem to="/" label="New Arrivals" icon={<FiBox />} onClick={onClose} />
           </nav>
         </div>
 
         {/* Logout Button */}
-        <div className="p-6 border-t border-gray-200/60 bg-gradient-to-t from-white/60 via-white/90">
+        <div className="p-6 border-t border-gray-300 bg-gray-100">
           <button
             onClick={handleLogout}
             disabled={isLoading}
             className="
               w-full flex items-center justify-center gap-2
-              bg-gradient-to-r from-blue-700 to-blue-600
-              hover:from-blue-800 hover:to-blue-700
+              bg-black
+              hover:bg-gray-900
               text-white py-2 rounded-full
               text-base font-semibold shadow-md
               transition-all focus:outline-none
@@ -104,20 +109,23 @@ const SideBar = ({ onClose }) => {
   );
 };
 
-// A modern nav item
+// NavItem with black & white friendly colors
 const NavItem = ({ to, label, icon, onClick }) => (
   <Link
     to={to}
     onClick={onClick}
     className="
       flex items-center gap-4 px-4 py-3 rounded-xl
-      hover:bg-blue-50 hover:text-blue-700
-      transition-all font-semibold text-gray-800
+      hover:bg-gray-200 hover:text-gray-900
+      transition-all font-semibold text-gray-700
       group
     "
   >
     <span
-      className="text-2xl text-blue-400 group-hover:scale-110 group-hover:text-blue-600 transition"
+      className="
+        text-2xl text-gray-600 group-hover:text-gray-900 transition
+        group-hover:scale-110
+      "
     >
       {icon}
     </span>
