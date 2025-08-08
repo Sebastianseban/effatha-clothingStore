@@ -4,10 +4,11 @@ import axios from "axios";
 import useUserStore from "../store/userStore";
 
 const axiosInstance = axios.create({
- baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1",
+ baseURL:"http://localhost:3000/api/v1",
   withCredentials: true, // Needed for refresh-token cookie
 });
 
+//  import.meta.env.VITE_API_URL || 
 // Request Interceptor: Attach accessToken from localStorage
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");

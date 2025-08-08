@@ -1,12 +1,30 @@
+
 import React, { useState } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import { useDebounce } from "use-debounce"; // ✅ NEW
+import { useDebounce } from "use-debounce";
 import useSearchProducts from "../../hooks/user/useSearchProducts";
+
+const highlightMatch = (text, query) => {
+  const index = text.toLowerCase().indexOf(query.toLowerCase());
+  if (index === -1) return text;
+
+  const before = text.slice(0, index);
+  const match = text.slice(index, index + query.length);
+  const after = text.slice(index + query.length);
+
+  return (
+    <>
+      {before}
+      <span className="bg-yellow-200 font-semibold">{match}</span>
+      {after}
+    </>
+  );
+};
 
 const SearchBar = () => {
   const [query, setQuery] = useState("");
-  const [debouncedQuery] = useDebounce(query.trim(), 300); 
+  const [debouncedQuery] = useDebounce(query.trim(), 300);
   const navigate = useNavigate();
 
   const { data: suggestions = [], isLoading } = useSearchProducts(debouncedQuery, {
@@ -21,7 +39,7 @@ const SearchBar = () => {
 
   const handleSuggestionClick = (title) => {
     navigate(`/search?q=${encodeURIComponent(title)}`);
-    setQuery(""); 
+    setQuery("");
   };
 
   return (
@@ -70,7 +88,6 @@ const SearchBar = () => {
         </div>
       </form>
 
-      {/* Suggestion Dropdown */}
       {debouncedQuery && suggestions.length > 0 && (
         <ul
           className="
@@ -95,7 +112,7 @@ const SearchBar = () => {
                 }
               }}
             >
-              {product.title}
+              {highlightMatch(product.title, query)}
             </li>
           ))}
         </ul>
