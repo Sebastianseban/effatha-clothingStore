@@ -3,7 +3,7 @@ import { FiX } from "react-icons/fi";
 import { useProduct } from "../../hooks/user/useProduct";
 import { useAddToCart } from "../../hooks/user/useAddToCart";
 
-
+import toast from "react-hot-toast";
 
 const AddtoCartPopup = ({ slug, onClose }) => {
   const { data: product, isLoading } = useProduct(slug);
@@ -25,11 +25,17 @@ const AddtoCartPopup = ({ slug, onClose }) => {
       },
       {
         onSuccess: () => {
-       
+       toast.success("Added to cart!");
           onClose();
         },
-        onError: () => {
-          alert("Failed to add to cart");
+        onError: (error) => {
+      const message =
+    error?.response?.data?.message ||
+    (error.response?.status === 401 ? "Please log in" : null) ||
+    "Something went wrong";
+
+  toast.error(message);
+         
         },
       }
     );
