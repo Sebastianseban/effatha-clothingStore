@@ -29,15 +29,67 @@ const AdminProductsPage = lazy(() => import("./pages/admin/AdminProductsPage.jsx
 const queryClient = new QueryClient();
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
+// const router = createBrowserRouter([
+//   {
+//     path: "/",
+//     element: <App />,
+//     children: [
+//       { path: "/", element: <HomePage /> },
+//       { path: "collections", element: <CollectionPage /> },
+//       { path: "collections/new-arrivals", element: <NewArrivals /> },
+//       { path: "collections/best-sellers", element: <BestSellers /> },
+//       {
+//         path: "signup",
+//         element: (
+//           <PublicRoute>
+//             <SignUpPage />
+//           </PublicRoute>
+//         ),
+//       },
+//       {
+//         path: "login",
+//         element: (
+//           <PublicRoute>
+//             <LoginPage />
+//           </PublicRoute>
+//         ),
+//       },
+//       { path: "product/:slug", element: <ProductPage /> },
+//       { path: "account", element: <UserProfilePage /> },
+//       { path: "checkout", element: <CheckoutPage /> },
+//       { path: "order-success", element: <OrderSuccessPage /> },
+//       { path: "order-history", element: <OrderHistoryPage /> },
+//       { path: "search", element: <SearchResultsPage/>},
+//     ],
+//   },
+//   {
+//     path: "/admin",
+//     element: <ProtectedRoute requiredRole="admin" />,
+//     children: [
+//       {
+//         path: "",
+//         element: <AdminLayout />,
+//         children: [
+//           { path: "", element: <AdminDashboard /> },
+//           { path: "admin-products", element: <AdminProductsPage /> },
+//         ],
+//       },
+//     ],
+//   },
+// ]);
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
+      // Public pages
       { path: "/", element: <HomePage /> },
       { path: "collections", element: <CollectionPage /> },
       { path: "collections/new-arrivals", element: <NewArrivals /> },
       { path: "collections/best-sellers", element: <BestSellers /> },
+      { path: "search", element: <SearchResultsPage /> },
+
+      // Auth pages (public only)
       {
         path: "signup",
         element: (
@@ -54,14 +106,47 @@ const router = createBrowserRouter([
           </PublicRoute>
         ),
       },
+
+      // Product detail (public)
       { path: "product/:slug", element: <ProductPage /> },
-      { path: "account", element: <UserProfilePage /> },
-      { path: "checkout", element: <CheckoutPage /> },
-      { path: "order-success", element: <OrderSuccessPage /> },
-      { path: "order-history", element: <OrderHistoryPage /> },
-      { path: "search", element: <SearchResultsPage/>},
+
+      // User-only pages
+      {
+        path: "account",
+        element: (
+          <ProtectedRoute>
+            <UserProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "checkout",
+        element: (
+          <ProtectedRoute>
+            <CheckoutPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "order-success",
+        element: (
+          <ProtectedRoute>
+            <OrderSuccessPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "order-history",
+        element: (
+          <ProtectedRoute>
+            <OrderHistoryPage />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
+
+  // Admin-only section
   {
     path: "/admin",
     element: <ProtectedRoute requiredRole="admin" />,
