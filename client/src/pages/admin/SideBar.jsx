@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { FiBox, FiShoppingCart, FiTruck, FiUsers } from "react-icons/fi";
+import { FiBox, FiImage, FiShoppingCart, FiTruck, FiUsers } from "react-icons/fi";
 import { MdDashboard } from "react-icons/md";
 
 const navItems = [
@@ -8,6 +8,7 @@ const navItems = [
   { name: "Orders", path: "/admin/orders", icon: FiShoppingCart },
   { name: "Delivery", path: "/admin/delivery", icon: FiTruck },
   { name: "Users", path: "/admin/users", icon: FiUsers },
+   { name: "Images", path: "/admin/images", icon: FiImage }
 ];
 
 const SideBar = () => {

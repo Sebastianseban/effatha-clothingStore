@@ -17,7 +17,7 @@ const NewArrivals = lazy(() => import("./pages/NewArrivals.jsx"));
 const LoginPage = lazy(() => import("./pages/Loginpage.jsx"));
 const SignUpPage = lazy(() => import("./pages/SignUp.jsx"));
 const ProductPage = lazy(() => import("./pages/ProductPage.jsx"));
-const UserProfilePage = lazy(() => import("./pages/user/userProfilePage.jsx"));
+const UserProfilePage = lazy(() => import("./pages/user/UserProfilePage.jsx"));
 const CheckoutPage = lazy(() => import("./pages/user/CheckoutPage.jsx"));
 const OrderSuccessPage = lazy(() => import("./pages/user/OrderSuccessPage.jsx"));
 const OrderHistoryPage = lazy(() => import("./pages/user/OrderHistoryPage.jsx"));
