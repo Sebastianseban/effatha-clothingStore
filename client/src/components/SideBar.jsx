@@ -68,7 +68,7 @@ const SideBar = ({ onClose }) => {
             />
             <NavItem to="#" label="Bottoms" icon={<FiTag />} onClick={onClose} />
             <NavItem to="#" label="T-Shirt" icon={<FiTag />} onClick={onClose} />
-            <NavItem to="/" label="New Arrivals" icon={<FiBox />} onClick={onClose} />
+            <NavItem to="/collections/new-arrivals" label="New Arrivals" icon={<FiBox />} onClick={onClose} />
           </nav>
         </div>
 

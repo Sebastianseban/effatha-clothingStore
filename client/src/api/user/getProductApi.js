@@ -1,6 +1,4 @@
 
-
-
 import axiosInstance from "../axiosInstance";
 
 export const searchProducts = async (query, filters = {}) => {
