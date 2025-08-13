@@ -29,11 +29,13 @@ import productRouter from "./routes/product.routes.js"
 import addressRoutes from "./routes/addresses.route.js";
 import cartRoutes from "./routes/cart.routes.js"
 import orderRoutes from "./routes/order.routes.js"
+import adminDashboard from "./routes/adminDashboard.routes.js"
 
 
 
 app.use("/api/v1/users",userRouter)
 app.use("/api/v1/admin",adminRouter)
+app.use("/api/v1/admin/dashboard",adminDashboard);
 app.use("/api/v1/product",productRouter)
 app.use("/api/v1/users/addresses", addressRoutes);
 app.use("/api/v1/cart", cartRoutes);
