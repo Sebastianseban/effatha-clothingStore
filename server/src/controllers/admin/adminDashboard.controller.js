@@ -111,31 +111,78 @@ export const getOrderStatusData = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, mapped, "Order status data fetched"));
 });
 
+
+
 export const getTopProducts = asyncHandler(async (req, res) => {
-  const topProducts = await Product.find()
-    .sort({ soldCount: -1 })
-    .limit(5)
-    .select("title soldCount -_id");
+  const topProducts = await Order.aggregate([
+    // Only delivered orders should count as sales
+    { $match: { orderStatus: "delivered" } },
 
-  const mapped = topProducts.map(p => ({
-    name: p.title,
-    sales: p.soldCount
-  }));
+    // Break items[] into individual documents
+    { $unwind: "$items" },
 
-  res.status(200).json(new ApiResponse(200, mapped, "Top products fetched"));
+    // Group by productId and sum total sold quantity
+    {
+      $group: {
+        _id: "$items.product",
+        totalSold: { $sum: "$items.quantity" },
+      },
+    },
+
+    // Sort products by total sales in descending order
+    { $sort: { totalSold: -1 } },
+
+    // Limit to top 5
+    { $limit: 5 },
+
+    // Lookup product details from products collection
+    {
+      $lookup: {
+        from: "products",
+        localField: "_id",
+        foreignField: "_id",
+        as: "product",
+      },
+    },
+
+    // Remove products that no longer exist
+    { $unwind: { path: "$product", preserveNullAndEmptyArrays: false } },
+
+    // Final shape of response
+    {
+      $project: {
+        _id: 0,
+        name: "$product.title",
+        sales: "$totalSold",
+        brand: "$product.brand",
+        image: "$product.image",
+      },
+    },
+  ]);
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, topProducts, "Top products fetched"));
 });
+
 
 export const getUserRoleData = asyncHandler(async (req, res) => {
   const data = await User.aggregate([
     { $group: { _id: "$role", count: { $sum: 1 } } }
   ]);
 
-  const mapped = data.map(d => ({
-    name: d._id.charAt(0).toUpperCase() + d._id.slice(1),
-    value: d.count
-  }));
+  const mapped = data.map(d => {
+    const role = d._id || "Unknown";
+    return {
+      name: role.charAt(0).toUpperCase() + role.slice(1),
+      value: d.count
+    };
+  });
 
-  res.status(200).json(new ApiResponse(200, mapped, "User role data fetched"));
-}); 
+  res
+    .status(200)
+    .json(new ApiResponse(200, mapped, "User role data fetched"));
+});
+
 
 
