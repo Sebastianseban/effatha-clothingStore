@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import PublicRoute from "./routes/PublicRoute.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 import SearchResultsPage from "./pages/user/SearchResultsPage.jsx";
+import AdminOrderPage from "./pages/admin/AdminOrderPage.jsx";
 
 // Lazy imports
 const HomePage = lazy(() => import("./pages/HomePage.jsx"));
@@ -109,6 +110,7 @@ const router = createBrowserRouter([
         children: [
           { path: "", element: <AdminDashboard /> },
           { path: "admin-products", element: <AdminProductsPage /> },
+          { path: "orders", element: <AdminOrderPage /> },
         ],
       },
     ],
