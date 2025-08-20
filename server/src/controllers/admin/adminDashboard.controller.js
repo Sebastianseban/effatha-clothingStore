@@ -111,8 +111,6 @@ export const getOrderStatusData = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, mapped, "Order status data fetched"));
 });
 
-
-
 export const getTopProducts = asyncHandler(async (req, res) => {
   const topProducts = await Order.aggregate([
     // Only delivered orders should count as sales
