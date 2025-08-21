@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import useUserStore from "../store/userStore";
 
-const ProtectedRoute = ({ requiredRole }) => {
+const ProtectedRoute = ({ requiredRole ,children }) => {
   const user = useUserStore((state) => state.user);
 
   if (!user) {
@@ -12,7 +12,7 @@ const ProtectedRoute = ({ requiredRole }) => {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  return <Outlet />;
+  return children ? children : <Outlet />;
 };
 
 export default ProtectedRoute;
