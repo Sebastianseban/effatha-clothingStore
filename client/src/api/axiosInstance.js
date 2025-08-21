@@ -4,7 +4,7 @@ import axios from "axios";
 import useUserStore from "../store/userStore";
 
 const axiosInstance = axios.create({
- baseURL: import.meta.env.VITE_API_URL,
+ baseURL: "http://localhost:3000/api/v1",
   withCredentials: true, // Needed for refresh-token cookie
 });
 // "http://localhost:3000/api/v1"
