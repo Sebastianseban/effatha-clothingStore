@@ -4,6 +4,7 @@ import { useGetAdminOrder } from "../../hooks/admin/useAdminOrders";
 import { useUpdateOrderStatus } from "../../hooks/admin/useUpdateOrderStatus";
 
 import { useDebounce } from "use-debounce";
+import OrderDetailModal from "../../components/admin/OrderDetailsModal";
 
 
 const statusColors = {
@@ -18,7 +19,7 @@ const AdminOrderPage = () => {
   const [search, setSearch] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [selectedOrder, setSelectedOrder] = useState(null);
+const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [updateError, setUpdateError] = useState("");
 
 
@@ -156,7 +157,7 @@ const AdminOrderPage = () => {
                 <td className="px-4 py-3">{order.date}</td>
                 <td className="px-4 py-3 flex items-center justify-center gap-2">
                   <button
-                    onClick={() => setSelectedOrder(order)}
+                    onClick={() => setSelectedOrderId(order.id)}
                     className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition text-sm font-medium"
                   >
                     View
@@ -187,53 +188,59 @@ const AdminOrderPage = () => {
         </table>
       </div>
 
-      {/* 🔹 Order Modal */}
-      {selectedOrder && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-6 relative">
-            <button
-              onClick={() => setSelectedOrder(null)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
-            >
-              ✕
-            </button>
-            <h2 className="text-2xl font-bold mb-5 text-gray-800">
-              📝 Order Details
-            </h2>
+      🔹 Order Modal
+      <OrderDetailModal
+  orderId={selectedOrderId}
+  onClose={() => setSelectedOrderId(null)}
+/>
 
-            <p className="mb-2">
-              <span className="font-semibold">Customer:</span> {selectedOrder.customer}
-            </p>
-            <p className="mb-2">
-              <span className="font-semibold">Email:</span> {selectedOrder.email}
-            </p>
-            <p className="mb-2">
-              <span className="font-semibold">Phone:</span> {selectedOrder.phone}
-            </p>
-            <p className="mb-4">
-              <span className="font-semibold">Address:</span> {selectedOrder.address}
-            </p>
-
-            {/* ✅ Fixed: Safe property access */}
-            <div className="mb-4">
-              <span className="font-semibold">Payment:</span>{" "}
-              {selectedOrder.payment?.method || "N/A"} ({selectedOrder.payment?.status || "Unknown"})
-            </div>
-
-            <h3 className="text-lg font-semibold mb-2">🛒 Items</h3>
-            <ul className="list-disc list-inside space-y-1">
-              {/* ✅ Fixed: Better key prop using item id or unique combination */}
-              {selectedOrder.items?.map((item, i) => (
-                <li key={item.id || `${item.name}-${i}`}>
-                  {item.qty} × {item.name} — ₹{item.price}
-                </li>
-              )) || <li className="text-gray-500">No items found</li>}
-            </ul>
-          </div>
-        </div>
-      )}
+      
     </div>
   );
 };
 
 export default AdminOrderPage;
+// {selectedOrder && (
+//         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+//           <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-6 relative">
+//             <button
+//               onClick={() => setSelectedOrder(null)}
+//               className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
+//             >
+//               ✕
+//             </button>
+//             <h2 className="text-2xl font-bold mb-5 text-gray-800">
+//               📝 Order Details
+//             </h2>
+
+//             <p className="mb-2">
+//               <span className="font-semibold">Customer:</span> {selectedOrder.customer}
+//             </p>
+//             <p className="mb-2">
+//               <span className="font-semibold">Email:</span> {selectedOrder.email}
+//             </p>
+//             <p className="mb-2">
+//               <span className="font-semibold">Phone:</span> {selectedOrder.phone}
+//             </p>
+//             <p className="mb-4">
+//               <span className="font-semibold">Address:</span> {selectedOrder.address}
+//             </p>
+
+//             {/* ✅ Fixed: Safe property access */}
+//             <div className="mb-4">
+//               <span className="font-semibold">Payment:</span>{" "}
+//               {selectedOrder.payment?.method || "N/A"} ({selectedOrder.payment?.status || "Unknown"})
+//             </div>
+
+//             <h3 className="text-lg font-semibold mb-2">🛒 Items</h3>
+//             <ul className="list-disc list-inside space-y-1">
+//               {/* ✅ Fixed: Better key prop using item id or unique combination */}
+//               {selectedOrder.items?.map((item, i) => (
+//                 <li key={item.id || `${item.name}-${i}`}>
+//                   {item.qty} × {item.name} — ₹{item.price}
+//                 </li>
+//               )) || <li className="text-gray-500">No items found</li>}
+//             </ul>
+//           </div>
+//         </div>
+//       )}
