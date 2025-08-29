@@ -38,6 +38,18 @@ export const createProduct = asyncHandler(async (req, res) => {
     throw new ApiError(400, "At least one product variant is required");
   }
 
+  // ✅ Duplicate check before uploading anything
+  const existingProduct = await Product.findOne({
+    title: title.trim(),
+    brand: brand.trim(),
+    category: category.trim(),
+    gender: gender.trim(),
+  });
+
+  if (existingProduct) {
+    throw new ApiError(400, "This product already exists in the database");
+  }
+
   const processedVariants = [];
   const uploadedPublicIds = []; // for rollback
 
@@ -46,7 +58,6 @@ export const createProduct = asyncHandler(async (req, res) => {
     const { color, sizes } = variant;
 
     if (!color?.trim() || !Array.isArray(sizes) || sizes.length === 0) {
-      // Rollback any uploaded images
       await Promise.all(uploadedPublicIds.map((id) => deleteFromCloudinary(id)));
       throw new ApiError(400, `Color and sizes are required for variant ${i + 1}`);
     }
@@ -79,16 +90,10 @@ export const createProduct = asyncHandler(async (req, res) => {
     });
   }
 
-   const baseSlug = title.toLowerCase().replace(/\s+/g, "-");
-  let slug = baseSlug;
-  let count = 1;
-  while (await Product.findOne({ slug })) {
-    slug = `${baseSlug}-${count}`;
-    count++;
-  }
+  // ✅ Keep slug simple: block duplicates instead of appending -1, -2
+  const slug = title.trim().toLowerCase().replace(/\s+/g, "-");
 
   let product;
-
   try {
     product = await Product.create({
       title: title.trim(),
@@ -104,7 +109,6 @@ export const createProduct = asyncHandler(async (req, res) => {
       variants: processedVariants,
     });
   } catch (err) {
-    // On DB error, rollback uploaded images
     await Promise.all(uploadedPublicIds.map((id) => deleteFromCloudinary(id)));
     throw new ApiError(500, "Failed to save product to database");
   }
