@@ -3,10 +3,12 @@ import React, { useState } from "react";
 import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
 import AddProduct from "../../components/admin/AddProduct";
 import { useAdminProducts } from "../../hooks/admin/useProducts";
+import EditProduct from "../../components/admin/AdminEditProductPop";
 
 const AdminProductsPage = () => {
   const [showAddProduct, setAddProduct] = useState(false);
   const { data: products = [], isLoading, isError } = useAdminProducts();
+  const [editingProduct, setEditingProduct] = useState(null);
 
   if (isLoading) return <div className="p-6">Loading products...</div>;
   if (isError) return <div className="p-6 text-red-500">Failed to load products.</div>;
@@ -54,10 +56,9 @@ const AdminProductsPage = () => {
                   <td className="px-6 py-4">₹{product.price.toFixed(2)}</td>
                   <td className="px-6 py-4">{product.stockNumber}</td>
                   <td className="px-6 py-4">
-                    {/* Show color and size count summary */}
-                    {product.color ? (
+                    {product.variants?.length > 0 ? (
                       <>
-                        <span className="font-medium">{product.color}</span> + {product.sizes?.length || 0} sizes
+                        {product.variants.length} variant(s)
                       </>
                     ) : (
                       "-"
@@ -70,7 +71,10 @@ const AdminProductsPage = () => {
                     <button className="text-blue-600 hover:text-blue-800">
                       <FiEye size={18} />
                     </button>
-                    <button className="text-green-600 hover:text-green-800">
+                    <button
+                      onClick={() => setEditingProduct(product)}
+                      className="text-green-600 hover:text-green-800"
+                    >
                       <FiEdit2 size={18} />
                     </button>
                     <button className="text-red-600 hover:text-red-800">
@@ -89,6 +93,13 @@ const AdminProductsPage = () => {
           </tbody>
         </table>
       </div>
+
+      {editingProduct && (
+        <EditProduct
+          product={editingProduct}
+          onClose={() => setEditingProduct(null)}
+        />
+      )}
     </div>
   );
 };
