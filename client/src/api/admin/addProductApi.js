@@ -10,3 +10,4 @@ export const addProduct = async (formData) => {
 
   return response.data;
 };
+
