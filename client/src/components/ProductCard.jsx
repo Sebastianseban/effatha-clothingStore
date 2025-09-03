@@ -34,7 +34,7 @@ const ProductCard = ({
             />
           </div>
 
-          <h1 className="text-black text-[18px] font-medium mt-1 line-clamp-2 min-h-[48px]">{title}</h1>
+          <h1 className="text-black text-[18px] font-medium mt-1">{title}</h1>
           <p className="text-sm text-gray-500">{color}</p>
           <p className="text-sm font-semibold text-gray-950">₹{price}</p>
         </div>

@@ -2,7 +2,7 @@ import { Product } from "../../models/product.model.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
-import { uploadToCloudinary } from "../../utils/cloudinary.js";
+import { deleteFromCloudinary, uploadToCloudinary } from "../../utils/cloudinary.js";
 
 
 export const createProduct = asyncHandler(async (req, res) => {
@@ -147,4 +147,111 @@ export const getAdminProducts = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, formattedProducts, "Admin products fetched"));
+});
+
+
+export const updateProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const product = await Product.findById(id);
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
+
+  const {
+    title,
+    brand,
+    description,
+    price,
+    category,
+    highLightTypes,
+    gender,
+    discount,
+    tags,
+    variants,
+  } = req.body;
+
+  let processedVariants = product.variants; // keep old variants by default
+
+  // ✅ Only parse variants if provided
+  if (variants) {
+    let parsedVariants;
+    try {
+      parsedVariants = JSON.parse(variants);
+    } catch (err) {
+      throw new ApiError(400, "Variants must be a valid JSON array");
+    }
+
+    if (!Array.isArray(parsedVariants) || parsedVariants.length === 0) {
+      throw new ApiError(400, "At least one product variant is required");
+    }
+
+    processedVariants = []; // rebuild variants
+    for (let i = 0; i < parsedVariants.length; i++) {
+      const variant = parsedVariants[i];
+      const { color, sizes } = variant;
+
+      if (!color?.trim() || !Array.isArray(sizes) || sizes.length === 0) {
+        throw new ApiError(400, `Color and sizes are required for variant ${i + 1}`);
+      }
+
+      const imageFiles = req.files?.[`images_${i}`];
+      let uploadedImages = [];
+
+      if (imageFiles && imageFiles.length > 0) {
+        for (let file of imageFiles) {
+          const uploaded = await uploadToCloudinary(file.path);
+          if (uploaded?.url) uploadedImages.push(uploaded.url);
+        }
+      } else {
+        uploadedImages = product.variants[i]?.images || [];
+      }
+
+      processedVariants.push({ color, sizes, images: uploadedImages });
+    }
+  }
+
+  // ✅ Update only fields provided
+  if (title) product.title = title;
+  if (brand) product.brand = brand;
+  if (description) product.description = description;
+  if (price) product.price = price;
+  if (category) product.category = category;
+  if (highLightTypes) product.highLightTypes = highLightTypes;
+  if (gender) product.gender = gender;
+  if (discount) product.discount = discount;
+  if (tags) product.tags = tags;
+  if (variants) product.variants = processedVariants;
+
+  // regenerate slug if title changes
+  if (title) {
+    product.slug = title.trim().toLowerCase().replace(/\s+/g, "-");
+  }
+
+  await product.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, product, "Product updated successfully"));
+});
+
+export const deleteProduct = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const product = await Product.findById(id);
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
+
+  // ✅ extract public_ids from stored images
+  const publicIds = product.variants.flatMap((v) =>
+    (v.images || []).map((img) => img.public_id)
+  );
+
+  await Promise.all(publicIds.map((pid) => deleteFromCloudinary(pid)));
+
+  await product.deleteOne();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Product deleted successfully"));
 });

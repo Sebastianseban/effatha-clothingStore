@@ -1,14 +1,37 @@
 import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
-import { createProduct, getAdminProducts } from "../controllers/admin/admin.controller.js";
+import {
+  createProduct,
+  getAdminProducts,
+  updateProduct,
+  deleteProduct,
+} from "../controllers/admin/admin.controller.js";
 import { verifyJWT } from "../middlewares/auth.Middleware.js";
 import { adminOnly } from "../middlewares/adminOnly.js";
 
 const router = Router();
 
+router.route("/add-product").post(
+  upload.fields([
+    { name: "images_0", maxCount: 5 },
+    { name: "images_1", maxCount: 5 },
+    { name: "images_2", maxCount: 5 },
+    { name: "images_3", maxCount: 5 },
+    { name: "images_4", maxCount: 5 },
+    { name: "images_5", maxCount: 5 },
+    { name: "images_6", maxCount: 5 },
+    { name: "images_7", maxCount: 5 },
+  ]),
+  verifyJWT,
+  adminOnly,
+  createProduct
+);
+
+router.route("/products").get(verifyJWT, adminOnly, getAdminProducts);
+
 router
-  .route("/add-product")
-  .post(
+  .route("/product/:id")
+  .put(
     upload.fields([
       { name: "images_0", maxCount: 5 },
       { name: "images_1", maxCount: 5 },
@@ -18,11 +41,12 @@ router
       { name: "images_5", maxCount: 5 },
       { name: "images_6", maxCount: 5 },
       { name: "images_7", maxCount: 5 },
-      
     ]),
     verifyJWT,
     adminOnly,
-    createProduct
-  );
-router.route("/products").get(getAdminProducts)
+    updateProduct
+  )
+
+  .delete(verifyJWT, adminOnly, deleteProduct);
+
 export default router;
